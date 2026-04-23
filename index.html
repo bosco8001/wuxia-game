@@ -438,6 +438,10 @@ details[open] summary::after { content: ' ▴'; }
       </div>
     </div>
     <button class="start-btn" id="start-btn">踏入亂世</button>
+    <div style="display:flex;gap:0.5rem;">
+  <button id="load-btn" onclick="loadGame()" style="display:none;flex:1;background:rgba(44,58,74,0.06);border:1px solid rgba(44,58,74,0.15);border-radius:0.7rem;padding:0.7rem;font-family:'Noto Serif SC',serif;font-size:0.85rem;color:#4a5e72;letter-spacing:0.2em;cursor:pointer;">讀取存檔</button>
+  <button id="del-btn" onclick="deleteSave()" style="display:none;background:rgba(120,40,40,0.06);border:1px solid rgba(120,40,40,0.15);border-radius:0.7rem;padding:0.7rem 1rem;font-family:'Noto Serif SC',serif;font-size:0.78rem;color:#7a3030;letter-spacing:0.1em;cursor:pointer;">刪除</button>
+</div>
   </div>
 
   <details class="api-details">
@@ -477,7 +481,10 @@ details[open] summary::after { content: ' ▴'; }
       <div id="story-text"></div>
       <span class="cursor" id="cursor" style="display:none"></span>
     </div>
-
+<!-- 存檔按鈕列 -->
+<div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-bottom:-0.5rem">
+  <button onclick="saveGame()" style="background:rgba(44,58,74,0.08);border:1px solid rgba(44,58,74,0.15);border-radius:0.5rem;padding:0.35rem 0.85rem;font-family:'Noto Serif SC',serif;font-size:0.7rem;color:#4a5e72;letter-spacing:0.15em;cursor:pointer;">存檔</button>
+</div>
     <div class="loading-indicator" id="loading">
       <div class="loading-dots"><span></span><span></span><span></span></div>
       <span>說書人正在鋪陳亂世…</span>
@@ -623,6 +630,7 @@ document.getElementById('origin-group').addEventListener('click',e=>{
   btn.classList.add('selected');playerOrigin=btn.dataset.origin;
 });
 document.getElementById('start-btn').addEventListener('click',startGame);
+updateSaveBtn();
 document.getElementById('restart-btn').addEventListener('click',()=>location.reload());
 document.getElementById('player-name').addEventListener('keydown',e=>{if(e.key==='Enter')startGame();});
 
@@ -694,7 +702,7 @@ async function callAI(userMsg){
   const msgs=[{role:'system',content:buildSystemPrompt()},...conversationHistory,{role:'user',content:userMsg}];
   const endpoint=apiProvider==='openai'?'https://dpapi.cn/v1/chat/completions':'https://dpapi.cn/v1/chat/completions';
   const model=apiProvider==='openai'?'gpt-4o-mini':'deepseek-chat';
-  const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${sk-XpnZz2oeDzHsRfX6B67e19C5F2E54307B2956674EfE3074a}`},body:JSON.stringify({model,messages:msgs,response_format:{type:'json_object'},temperature:0.88,max_tokens:700})});
+  const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},body:JSON.stringify({model,messages:msgs,response_format:{type:'json_object'},temperature:0.88,max_tokens:700})});
   if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
   const data=await res.json();
   const content=data.choices[0].message.content;
@@ -749,6 +757,128 @@ async function generateStory(choiceMade){
   choiceBtns.forEach(btn=>{
     btn.onclick=()=>{const t=btn.querySelector('.choice-text').textContent;if(t)generateStory(t);};
   });
+}
+
+// ====== 存檔系統 ======
+function saveGame() {
+  const saveData = {
+    playerName, playerOrigin, chapterNum,
+    playerStats, factionRep, foundClues,
+    conversationHistory, historyLog,
+    savedAt: new Date().toLocaleString('zh-HK')
+  };
+  localStorage.setItem('wuxia_save', JSON.stringify(saveData));
+  showToast('存檔成功 ✓');
+}
+
+function loadGame() {
+  const raw = localStorage.getItem('wuxia_save');
+  if (!raw) { showToast('沒有存檔記錄'); return; }
+  const d = JSON.parse(raw);
+  playerName = d.playerName;
+  playerOrigin = d.playerOrigin;
+  chapterNum = d.chapterNum;
+  playerStats = d.playerStats;
+  factionRep = d.factionRep;
+  foundClues = d.foundClues || [];
+  conversationHistory = d.conversationHistory || [];
+  historyLog = d.historyLog || [];
+
+  screenIntro.classList.remove('active');
+  screenGame.classList.add('active');
+  document.getElementById('topbar-name').textContent = playerName + ' · 亂世江湖';
+  updateStats();
+  updateRepBars();
+
+  // 恢復已知因果碎片顯示
+  if (foundClues.length > 0) {
+    cluePanel.classList.add('show');
+    clueList.innerHTML = '';
+    foundClues.forEach(text => {
+      const item = document.createElement('div');
+      item.className = 'clue-item';
+      item.textContent = text;
+      clueList.appendChild(item);
+    });
+  }
+
+  // 恢復日誌顯示
+  if (historyLog.length > 0) {
+    historySection.style.display = 'block';
+    historyList.innerHTML = historyLog.map(h =>
+      `<div class="history-item"><span class="hi-c">▸ ${h.choice}</span>${h.summary}</div>`
+    ).join('');
+  }
+
+  showToast(`讀取存檔成功，第${chapterNum-1}回`);
+
+  // 繼續生成下一段故事
+  generateStory(null);
+}
+
+function deleteSave() {
+  localStorage.removeItem('wuxia_save');
+  showToast('存檔已刪除');
+  updateSaveBtn();
+}
+function exportSave() {
+  const raw = localStorage.getItem('wuxia_save');
+  if (!raw) { showToast('沒有存檔可以匯出'); return; }
+  const blob = new Blob([raw], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `江湖存檔_${playerName || '俠客'}_第${chapterNum-1}回.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('存檔已匯出 ✓');
+}
+
+function importSave(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      localStorage.setItem('wuxia_save', JSON.stringify(data));
+      showToast('存檔已匯入，請點「讀取存檔」繼續');
+      updateSaveBtn();
+    } catch {
+      showToast('檔案格式錯誤，請選正確的存檔檔案');
+    }
+  };
+  reader.readAsText(file);
+}
+function showToast(msg) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = `
+      position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+      background:rgba(44,58,74,0.9); color:#f4f9fd;
+      padding:0.5rem 1.2rem; border-radius:2rem;
+      font-size:0.78rem; letter-spacing:0.15em;
+      z-index:999; pointer-events:none;
+      font-family:'Noto Serif SC',serif;
+      box-shadow:0 4px 16px rgba(0,0,0,0.2);
+      transition: opacity 0.4s ease;
+    `;
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+}
+
+function updateSaveBtn() {
+  const hasSave = !!localStorage.getItem('wuxia_save');
+  const loadBtn = document.getElementById('load-btn');
+  const delBtn = document.getElementById('del-btn');
+  if (loadBtn) loadBtn.style.display = hasSave ? 'inline-block' : 'none';
+  if (delBtn) delBtn.style.display = hasSave ? 'inline-block' : 'none';
 }
 
 function showEnding(finalStory){
