@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大樑末年 — 測試版本1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+:root {
+  --ink:        #2c3a4a;
+  --ink-light:  #4a5e72;
+  --ink-faint:  #8fa8bf;
+  --ink-ghost:  #c8d8e8;
+  --wash-blue:  #deeaf5;
+  --wash-mid:   #eaf3fa;
+  --wash-light: #f4f9fd;
+  --white:      #fafcfe;
+  --border:     rgba(44,58,74,0.12);
+  --border-mid: rgba(44,58,74,0.18);
+  --card-bg:    rgba(250,252,254,0.82);
+  --accent:     #3a6b8a;
+  --accent-dim: #5b8fac;
+  --danger:     #7a3030;
+  --shadow-sm:  0 2px 12px rgba(44,58,74,0.08);
+  --shadow-md:  0 8px 32px rgba(44,58,74,0.1);
+  --transition: 220ms cubic-bezier(0.16,1,0.3,1);
+  --font-display: 'Ma Shan Zheng', 'Noto Serif SC', serif;
+  --font-body: 'Noto Serif SC', serif;
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--white);
+  overflow-x: hidden;
+  position: relative;
+}
+
+.bg-wash {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180,210,230,0.25) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 10% 80%, rgba(180,200,220,0.1) 0%, transparent 60%),
+    linear-gradient(180deg, #eaf4fb 0%, #f4f9fd 50%, #fafcfe 100%);
+}
+.bg-wash::after {
+  content: '';
+  position: absolute; inset: 0; opacity: 0.025;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(44,58,74,1) 3px, rgba(44,58,74,1) 3.5px),
+    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(44,58,74,1) 3px, rgba(44,58,74,1) 3.5px);
+}
+
+/* Drifting line-art clouds */
+.scene-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.cloud-group { position: absolute; animation: cloud-drift linear infinite; opacity: 0; }
+.cg-1 { top: 6%;  animation-duration: 90s;  animation-delay: 0s; }
+.cg-2 { top: 14%; animation-duration: 130s; animation-delay: -40s; }
+.cg-3 { top: 22%; animation-duration: 100s; animation-delay: -70s; }
+.cg-4 { top: 38%; animation-duration: 80s;  animation-delay: -20s; }
+.cg-5 { top: 5%;  animation-duration: 160s; animation-delay: -90s; }
+.cg-6 { top: 30%; animation-duration: 110s; animation-delay: -55s; }
+@keyframes cloud-drift {
+  0%   { left: -280px; opacity: 0; }
+  4%   { opacity: 1; }
+  94%  { opacity: 1; }
+  100% { left: 110%; opacity: 0; }
+}
+
+.landscape-layer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 0; pointer-events: none; height: 220px;
+}
+
+.screen { position: relative; z-index: 1; display: none; }
+.screen.active { display: flex; }
+
+/* ===== INTRO ===== */
+#screen-intro {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 2.5rem 1rem 5rem;
+  text-align: center;
+}
+
+.brush-deco { width: 200px; margin-bottom: 1.2rem; opacity: 0.5; }
+
+.intro-era {
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.45em;
+  margin-bottom: 0.4rem;
+  font-weight: 300;
+}
+.intro-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  color: var(--ink);
+  letter-spacing: 0.2em;
+  line-height: 1.1;
+  margin-bottom: 0.3rem;
+  text-shadow: 1px 1px 0 rgba(44,58,74,0.07), 0 2px 8px rgba(44,58,74,0.07);
+}
+.intro-subtitle {
+  font-size: clamp(0.7rem,2vw,0.85rem);
+  color: var(--ink-faint);
+  letter-spacing: 0.38em;
+  margin-bottom: 0.5rem;
+  font-weight: 300;
+}
+.version-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--danger);
+  border: 1px solid rgba(122,48,48,0.25);
+  border-radius: 3px;
+  padding: 0.15rem 0.5rem;
+  margin-bottom: 1.8rem;
+  background: rgba(122,48,48,0.04);
+}
+.brush-line { width: 180px; height: 1px; background: linear-gradient(90deg, transparent, var(--ink-faint), transparent); margin: 0 auto 2rem; }
+
+/* Faction strip */
+.faction-strip {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 400px;
+}
+.faction-tag {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+  border: 1px solid;
+  font-weight: 300;
+  white-space: nowrap;
+}
+.ft-fuqing  { color: #2d5986; border-color: rgba(45,89,134,0.3); background: rgba(45,89,134,0.06); }
+.ft-tianli  { color: #5a3a1a; border-color: rgba(90,58,26,0.3);  background: rgba(90,58,26,0.06); }
+.ft-cao     { color: #2a6040; border-color: rgba(42,96,64,0.3);  background: rgba(42,96,64,0.06); }
+.ft-wudu    { color: #5a1a5a; border-color: rgba(90,26,90,0.3);  background: rgba(90,26,90,0.06); }
+.ft-saren   { color: #3a3a5a; border-color: rgba(58,58,90,0.3);  background: rgba(58,58,90,0.06); }
+
+/* Card */
+.intro-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-mid);
+  border-radius: 1.5rem;
+  padding: 1.75rem 2rem;
+  width: 100%;
+  max-width: 380px;
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-md), 0 0 0 4px rgba(255,255,255,0.55);
+  display: flex; flex-direction: column; gap: 1.15rem;
+}
+.form-label {
+  display: block; font-size: 0.7rem; color: var(--ink-faint);
+  letter-spacing: 0.28em; margin-bottom: 0.38rem; font-weight: 300;
+}
+.name-input {
+  width: 100%; background: rgba(255,255,255,0.9);
+  border: 1px solid var(--border-mid); border-radius: 0.6rem;
+  padding: 0.65rem 1rem; font-family: var(--font-body);
+  font-size: 0.95rem; color: var(--ink); text-align: center;
+  letter-spacing: 0.12em; outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.name-input:focus { border-color: var(--accent-dim); box-shadow: 0 0 0 3px rgba(58,107,138,0.1); }
+.name-input::placeholder { color: var(--ink-ghost); }
+
+.origin-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.45rem; }
+.origin-btn {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid var(--border); border-radius: 0.7rem;
+  padding: 0.6rem 0.3rem; color: var(--ink-faint);
+  font-family: var(--font-body); font-size: 0.68rem;
+  cursor: pointer; transition: all var(--transition);
+  text-align: center; line-height: 1.6; font-weight: 300;
+}
+.origin-btn:hover { border-color: var(--accent-dim); color: var(--ink); }
+.origin-btn.selected { border-color: var(--accent); color: var(--accent); background: rgba(58,107,138,0.06); font-weight: 500; }
+.origin-btn .icon { font-size: 1.15em; display: block; margin-bottom: 2px; }
+
+.start-btn {
+  width: 100%; background: var(--ink); border: none; border-radius: 0.7rem;
+  padding: 0.85rem; color: #f4f9fd; font-family: var(--font-display);
+  font-size: 1.2rem; letter-spacing: 0.25em; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(44,58,74,0.25); transition: all var(--transition); margin-top: 0.15rem;
+}
+.start-btn:hover { background: var(--ink-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(44,58,74,0.3); }
+.start-btn:active { transform: translateY(0); }
+
+.api-details { width: 100%; max-width: 380px; margin-top: 0.6rem; }
+.api-details summary { font-size: 0.68rem; color: var(--ink-ghost); letter-spacing: 0.18em; cursor: pointer; list-style: none; text-align: center; padding: 0.4rem; }
+.api-details summary::-webkit-details-marker { display: none; }
+.api-details summary::after { content: ' ▾'; }
+details[open] summary::after { content: ' ▴'; }
+.api-inner { background: rgba(250,252,254,0.88); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem; margin-top: 0.4rem; backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 0.5rem; }
+.api-inner select, .api-inner input[type="password"] { width: 100%; background: rgba(255,255,255,0.95); border: 1px solid var(--border-mid); border-radius: 0.45rem; padding: 0.45rem 0.7rem; font-family: var(--font-body); font-size: 0.75rem; color: var(--ink); outline: none; }
+.api-note { font-size: 0.65rem; color: var(--ink-ghost); line-height: 1.8; }
+.api-note a { color: var(--accent-dim); }
+
+/* ===== GAME ===== */
+#screen-game { flex-direction: column; min-height: 100dvh; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(250,252,254,0.84); backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.55rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  box-shadow: 0 1px 8px rgba(44,58,74,0.06);
+}
+.topbar-left { display: flex; flex-direction: column; gap: 0.1rem; }
+.topbar-title { font-family: var(--font-display); font-size: 1.05rem; color: var(--ink); letter-spacing: 0.18em; white-space: nowrap; }
+.topbar-era { font-size: 0.58rem; color: var(--ink-ghost); letter-spacing: 0.2em; font-weight: 300; }
+.stats-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.stat-chip { display: flex; align-items: center; gap: 0.2rem; font-size: 0.65rem; background: rgba(220,235,245,0.4); border: 1px solid var(--border); border-radius: 999px; padding: 0.15rem 0.55rem; white-space: nowrap; font-weight: 300; }
+.stat-chip .sl { color: var(--ink-ghost); }
+.stat-chip .sv { color: var(--ink); font-weight: 500; }
+.stat-chip.hp .sv { color: #7a3030; }
+.stat-chip.mp .sv { color: #2d6b5a; }
+.stat-chip.rank .sv { color: var(--accent); }
+.stat-chip.faction .sv { color: #5a3a1a; }
+
+.game-layout { flex: 1; max-width: 760px; margin: 0 auto; width: 100%; padding: 1.75rem 1rem 5rem; display: flex; flex-direction: column; gap: 1.15rem; }
+
+/* Story card */
+.story-card {
+  background: var(--card-bg); border: 1px solid var(--border-mid); border-radius: 1.25rem;
+  padding: 1.75rem 2.1rem; box-shadow: var(--shadow-md), 0 0 0 3px rgba(255,255,255,0.5);
+  backdrop-filter: blur(14px); min-height: 180px; position: relative;
+}
+.story-card::before {
+  content: ''; position: absolute; top: 1rem; right: 1.25rem;
+  width: 38px; height: 38px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M5,35 Q12,5 35,8' stroke='rgba(44,58,74,0.11)' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M10,38 Q18,12 38,14' stroke='rgba(44,58,74,0.06)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.chapter-label { font-size: 0.65rem; color: var(--ink-faint); letter-spacing: 0.32em; margin-bottom: 0.8rem; display: block; font-weight: 300; }
+#story-text { font-size: 0.97rem; line-height: 2.18; color: var(--ink); white-space: pre-wrap; font-weight: 300; }
+.cursor { display: inline-block; width: 1.5px; height: 1.1em; background: var(--accent); margin-left: 2px; vertical-align: text-bottom; animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* Faction tag inline */
+.faction-inline {
+  display: inline-block; font-size: 0.62rem; letter-spacing: 0.1em;
+  padding: 0.1rem 0.4rem; border-radius: 2px; border: 1px solid;
+  margin: 0 0.1rem; vertical-align: middle; font-weight: 400;
+}
+
+/* Clue panel */
+.clue-panel {
+  background: rgba(90,58,26,0.04);
+  border: 1px solid rgba(90,58,26,0.14);
+  border-radius: 0.9rem;
+  padding: 0.9rem 1.1rem;
+  display: none;
+}
+.clue-panel.show { display: block; }
+.clue-title { font-size: 0.65rem; color: rgba(90,58,26,0.7); letter-spacing: 0.28em; margin-bottom: 0.5rem; font-weight: 300; }
+.clue-list { display: flex; flex-direction: column; gap: 0.3rem; }
+.clue-item { font-size: 0.72rem; color: var(--ink-light); line-height: 1.7; font-weight: 300; padding-left: 0.8rem; position: relative; }
+.clue-item::before { content: '◆'; position: absolute; left: 0; font-size: 0.4em; top: 0.45em; color: rgba(90,58,26,0.5); }
+
+.loading-indicator { display: none; align-items: center; gap: 0.75rem; color: var(--ink-faint); font-size: 0.78rem; padding: 0.5rem 0.25rem; font-weight: 300; }
+.loading-indicator.active { display: flex; }
+.loading-dots { display: flex; gap: 4px; }
+.loading-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-faint); animation: pdot 1.4s ease-in-out infinite; }
+.loading-dots span:nth-child(2) { animation-delay:.2s; }
+.loading-dots span:nth-child(3) { animation-delay:.4s; }
+@keyframes pdot { 0%,80%,100%{opacity:.25;transform:scale(.8)} 40%{opacity:1;transform:scale(1.2)} }
+
+.error-banner { display: none; background: rgba(120,40,40,0.07); border: 1px solid rgba(120,40,40,0.2); border-radius: 0.65rem; padding: 0.7rem 1rem; font-size: 0.78rem; color: #7a3030; line-height: 1.7; }
+.error-banner.show { display: block; }
+
+.choices-section { display: flex; flex-direction: column; gap: 0.5rem; }
+.choices-label { font-size: 0.65rem; color: var(--ink-ghost); letter-spacing: 0.28em; font-weight: 300; padding-left: 0.2rem; }
+.choice-btn {
+  background: var(--card-bg); border: 1px solid var(--border-mid); border-radius: 1rem;
+  padding: 0.82rem 1rem; color: var(--ink-light); font-family: var(--font-body);
+  font-size: 0.875rem; font-weight: 300; text-align: left; cursor: pointer;
+  transition: all var(--transition); display: flex; align-items: center; gap: 0.7rem;
+  line-height: 1.7; backdrop-filter: blur(8px); box-shadow: var(--shadow-sm);
+  opacity: 0; transform: translateY(8px);
+}
+.choice-btn.visible { opacity: 1; transform: translateY(0); transition: opacity .45s ease, transform .45s ease, background var(--transition), border-color var(--transition); }
+.choice-btn:hover { background: rgba(220,235,245,0.55); border-color: var(--accent-dim); color: var(--ink); transform: translateX(5px); box-shadow: 0 4px 16px rgba(44,58,74,0.1); }
+.choice-btn:active { transform: translateX(2px); }
+.choice-btn:disabled { opacity:.32; cursor:not-allowed; transform:none; }
+.choice-num { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border-mid); color: var(--ink-faint); font-size: 0.65rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 300; }
+
+/* Faction reputation panel */
+.rep-panel {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem;
+  padding: 1rem 1.2rem; backdrop-filter: blur(8px);
+}
+.rep-title { font-size: 0.65rem; color: var(--ink-ghost); letter-spacing: 0.28em; margin-bottom: 0.65rem; font-weight: 300; }
+.rep-list { display: flex; flex-direction: column; gap: 0.42rem; }
+.rep-row { display: flex; align-items: center; gap: 0.6rem; }
+.rep-name { font-size: 0.68rem; color: var(--ink-light); width: 56px; flex-shrink: 0; font-weight: 300; }
+.rep-bar-bg { flex: 1; height: 3px; background: rgba(44,58,74,0.08); border-radius: 2px; overflow: hidden; }
+.rep-bar { height: 100%; border-radius: 2px; transition: width 0.8s ease; min-width: 2px; }
+.rep-val { font-size: 0.6rem; color: var(--ink-ghost); width: 28px; text-align: right; flex-shrink: 0; }
+.rb-fuqing { background: #2d5986; }
+.rb-tianli  { background: #8a5a1a; }
+.rb-cao     { background: #2a6040; }
+.rb-wudu    { background: #7a2a7a; }
+.rb-saren   { background: #4a4a7a; }
+
+.history-section { border-top: 1px solid var(--border); padding-top: 0.9rem; }
+.history-label { font-size: 0.65rem; color: var(--ink-ghost); letter-spacing: 0.25em; margin-bottom: 0.45rem; font-weight: 300; }
+.history-item { font-size: 0.7rem; color: var(--ink-faint); padding: 0.32rem 0.6rem; border-left: 1.5px solid var(--border-mid); line-height: 1.8; margin-bottom: 0.28rem; font-weight: 300; }
+.history-item .hi-c { color: var(--accent-dim); font-size: 0.65em; display: block; margin-bottom: 1px; }
+
+#screen-ending { position: fixed; inset: 0; z-index: 100; background: rgba(234,244,251,0.92); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; backdrop-filter: blur(16px); }
+.ending-title { font-family: var(--font-display); font-size: clamp(2rem,5vw,3.5rem); color: var(--ink); letter-spacing: 0.2em; margin-bottom: 1rem; }
+.ending-text { font-size: 0.95rem; color: var(--ink-light); max-width: 52ch; line-height: 2.3; margin-bottom: 2.5rem; font-weight: 300; }
+.restart-btn { background: var(--ink); border: none; border-radius: 0.65rem; padding: 0.75rem 2.5rem; color: #f4f9fd; font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.22em; cursor: pointer; box-shadow: 0 4px 16px rgba(44,58,74,0.2); transition: all var(--transition); }
+.restart-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(44,58,74,0.28); }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+@media (max-width: 600px) {
+  .topbar { flex-direction: column; align-items: flex-start; }
+  .story-card { padding: 1.2rem; }
+  .intro-card { padding: 1.4rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-wash"></div>
+
+<!-- Line-art clouds -->
+<div class="scene-layer">
+  <div class="cloud-group cg-1">
+    <svg width="220" height="60" viewBox="0 0 220 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10,45 Q30,15 60,22 Q70,5 100,12 Q115,2 138,10 Q160,4 178,18 Q200,14 210,30 Q218,38 205,42 Q190,50 160,46 Q140,52 110,48 Q85,55 60,49 Q35,54 20,48 Q8,52 10,45 Z" stroke="rgba(44,58,74,0.16)" stroke-width="1.2" fill="rgba(255,255,255,0.52)"/>
+      <path d="M40,45 Q55,35 75,38" stroke="rgba(44,58,74,0.09)" stroke-width="0.8" fill="none"/>
+      <path d="M120,46 Q145,38 165,42" stroke="rgba(44,58,74,0.07)" stroke-width="0.8" fill="none"/>
+    </svg>
+  </div>
+  <div class="cloud-group cg-2">
+    <svg width="140" height="38" viewBox="0 0 140 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8,28 Q20,8 42,14 Q52,2 72,8 Q90,2 108,12 Q124,8 132,20 Q138,26 128,30 Q115,36 90,32 Q68,38 45,33 Q22,37 12,32 Q4,35 8,28 Z" stroke="rgba(44,58,74,0.13)" stroke-width="1" fill="rgba(255,255,255,0.48)"/>
+    </svg>
+  </div>
+  <div class="cloud-group cg-3">
+    <svg width="260" height="50" viewBox="0 0 260 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5,35 Q25,12 55,18 Q65,5 95,10 Q115,0 148,8 Q168,2 195,12 Q220,6 240,20 Q255,26 248,34 Q238,42 215,38 Q195,44 168,40 Q145,46 120,42 Q95,48 70,43 Q45,48 25,42 Q10,45 5,35 Z" stroke="rgba(44,58,74,0.13)" stroke-width="1.1" fill="rgba(255,255,255,0.42)"/>
+      <path d="M50,38 Q80,28 110,32" stroke="rgba(44,58,74,0.07)" stroke-width="0.9" fill="none" stroke-dasharray="4 3"/>
+    </svg>
+  </div>
+  <div class="cloud-group cg-4">
+    <svg width="90" height="28" viewBox="0 0 90 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5,20 Q14,6 28,10 Q35,2 50,6 Q62,2 72,10 Q82,8 86,16 Q89,21 82,23 Q70,27 52,24 Q34,27 18,24 Q6,26 5,20 Z" stroke="rgba(44,58,74,0.12)" stroke-width="0.9" fill="rgba(255,255,255,0.42)"/>
+    </svg>
+  </div>
+  <div class="cloud-group cg-5">
+    <svg width="180" height="44" viewBox="0 0 180 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8,30 Q22,10 48,16 Q58,4 80,9 Q98,2 118,10 Q136,5 152,16 Q165,12 172,24 Q177,30 168,34 Q155,40 132,36 Q112,42 88,38 Q64,43 42,38 Q20,43 10,37 Q4,40 8,30 Z" stroke="rgba(44,58,74,0.14)" stroke-width="1.1" fill="rgba(255,255,255,0.48)"/>
+    </svg>
+  </div>
+  <div class="cloud-group cg-6">
+    <svg width="160" height="35" viewBox="0 0 160 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5,24 Q18,8 38,13 Q48,3 65,8 Q80,2 98,8 Q114,3 130,12 Q145,8 152,20 Q157,26 148,28 Q136,33 115,29 Q95,34 72,30 Q50,34 30,29 Q13,32 5,24 Z" stroke="rgba(44,58,74,0.11)" stroke-width="0.9" fill="rgba(255,255,255,0.4)"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Mountain landscape -->
+<svg class="landscape-layer" viewBox="0 0 1440 220" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,180 Q80,100 180,130 Q250,90 340,120 Q420,80 520,115 Q600,75 700,108 Q780,70 880,105 Q960,68 1060,100 Q1140,72 1240,105 Q1320,80 1440,115 L1440,220 L0,220 Z" fill="rgba(44,58,74,0.055)"/>
+  <path d="M0,200 Q60,148 140,162 Q200,135 280,155 Q360,128 450,150 Q530,132 620,155 Q700,128 800,152 Q880,130 970,155 Q1060,130 1160,158 Q1250,136 1360,158 L1440,165 L1440,220 L0,220 Z" fill="rgba(44,58,74,0.085)"/>
+  <path d="M0,210 Q100,188 200,200 Q280,185 380,198 Q480,184 580,197 Q680,183 780,197 Q880,183 980,198 Q1080,185 1200,200 Q1320,186 1440,200 L1440,220 L0,220 Z" fill="rgba(44,58,74,0.065)"/>
+  <line x1="0" y1="205" x2="1440" y2="205" stroke="rgba(44,58,74,0.055)" stroke-width="0.8" stroke-dasharray="8 6"/>
+  <line x1="0" y1="213" x2="1440" y2="213" stroke="rgba(44,58,74,0.035)" stroke-width="0.6" stroke-dasharray="12 8"/>
+  <g stroke="rgba(44,58,74,0.14)" stroke-width="1" fill="none">
+    <line x1="340" y1="120" x2="340" y2="140"/><path d="M331,134 Q340,118 349,134"/>
+    <line x1="358" y1="122" x2="358" y2="140"/><path d="M350,136 Q358,120 366,136"/>
+    <line x1="700" y1="108" x2="700" y2="128"/><path d="M691,122 Q700,106 709,122"/>
+    <line x1="718" y1="112" x2="718" y2="128"/><path d="M710,124 Q718,110 726,124"/>
+    <line x1="1060" y1="100" x2="1060" y2="120"/><path d="M1051,114 Q1060,98 1069,114"/>
+  </g>
+</svg>
+
+<!-- ===== INTRO ===== -->
+<section class="screen active" id="screen-intro">
+  <svg class="brush-deco" viewBox="0 0 200 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10,15 Q50,5 100,15 Q150,25 190,12" stroke="rgba(44,58,74,0.28)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path d="M30,18 Q70,10 100,18 Q130,26 165,16" stroke="rgba(44,58,74,0.11)" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <rect x="182" y="8" width="14" height="14" rx="1" stroke="rgba(120,40,40,0.32)" stroke-width="1" fill="rgba(120,40,40,0.05)"/>
+    <text x="189" y="19" font-size="6" fill="rgba(120,40,40,0.48)" text-anchor="middle" font-family="serif">俠</text>
+  </svg>
+
+  <p class="intro-era">大樑末年 · 平行武俠世界</p>
+  <h1 class="intro-title">亂世江湖</h1>
+  <p class="intro-subtitle">火器時代的武林存亡之戰</p>
+  <span class="version-badge">測試版本 1</span>
+  <div class="brush-line"></div>
+
+  <!-- Faction strip -->
+  <div class="faction-strip">
+    <span class="faction-tag ft-fuqing">⚙ 扶清會</span>
+    <span class="faction-tag ft-tianli">☯ 天理教</span>
+    <span class="faction-tag ft-cao">⚓ 漕幫</span>
+    <span class="faction-tag ft-wudu">☠ 五毒教</span>
+    <span class="faction-tag ft-saren">⚔ 散人聯盟</span>
+  </div>
+
+  <div class="intro-card">
+    <div>
+      <span class="form-label">俠客名號</span>
+      <input class="name-input" type="text" id="player-name" placeholder="請輸入你的名字" maxlength="8" autocomplete="off">
+    </div>
+    <div>
+      <span class="form-label">選擇出身</span>
+      <div class="origin-grid" id="origin-group">
+        <button class="origin-btn selected" data-origin="扶清會探子"><span class="icon">⚙️</span>扶清探子</button>
+        <button class="origin-btn" data-origin="天理教俗家弟子"><span class="icon">☯️</span>天理俗家</button>
+        <button class="origin-btn" data-origin="漕幫水手"><span class="icon">⚓</span>漕幫水手</button>
+        <button class="origin-btn" data-origin="五毒教棄徒"><span class="icon">☠️</span>五毒棄徒</button>
+        <button class="origin-btn" data-origin="散人俠客"><span class="icon">⚔️</span>散人俠客</button>
+        <button class="origin-btn" data-origin="街頭乞丐"><span class="icon">🪔</span>街頭乞丐</button>
+      </div>
+    </div>
+    <button class="start-btn" id="start-btn">踏入亂世</button>
+  </div>
+
+  <details class="api-details">
+    <summary>設定 AI（選填）</summary>
+    <div class="api-inner">
+      <select id="api-provider">
+        <option value="deepseek">DeepSeek（推薦·最便宜）</option>
+        <option value="openai">OpenAI GPT-4o-mini</option>
+      </select>
+      <input type="password" id="api-key-input" placeholder="貼上你的 API Key（sk-...）">
+      <p class="api-note">
+        如不輸入 Key 將使用示範模式。<br>
+        免費申請：<a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a>
+      </p>
+    </div>
+  </details>
+</section>
+
+<!-- ===== GAME ===== -->
+<section class="screen" id="screen-game">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-title" id="topbar-name">亂世江湖</span>
+      <span class="topbar-era">大樑末年 · 測試版本1</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-chip hp"><span class="sl">氣血</span><span class="sv" id="stat-hp">100</span></div>
+      <div class="stat-chip mp"><span class="sl">內力</span><span class="sv" id="stat-mp">50</span></div>
+      <div class="stat-chip rank"><span class="sl">武功</span><span class="sv" id="stat-rank">初學</span></div>
+      <div class="stat-chip faction"><span class="sl">陣營</span><span class="sv" id="stat-faction">無</span></div>
+    </div>
+  </header>
+
+  <main class="game-layout">
+    <div class="story-card">
+      <span class="chapter-label" id="chapter-label">第一回</span>
+      <div id="story-text"></div>
+      <span class="cursor" id="cursor" style="display:none"></span>
+    </div>
+
+    <div class="loading-indicator" id="loading">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <span>說書人正在鋪陳亂世…</span>
+    </div>
+
+    <div class="error-banner" id="error-banner"></div>
+
+    <div class="choices-section" id="choices-section">
+      <span class="choices-label">你的選擇</span>
+      <button class="choice-btn" id="c1"><span class="choice-num">一</span><span class="choice-text"></span></button>
+      <button class="choice-btn" id="c2"><span class="choice-num">二</span><span class="choice-text"></span></button>
+      <button class="choice-btn" id="c3"><span class="choice-num">三</span><span class="choice-text"></span></button>
+    </div>
+
+    <!-- Faction rep bars -->
+    <div class="rep-panel" id="rep-panel" style="display:none">
+      <div class="rep-title">各方勢力好感</div>
+      <div class="rep-list">
+        <div class="rep-row"><span class="rep-name">扶清會</span><div class="rep-bar-bg"><div class="rep-bar rb-fuqing" id="rb-fuqing" style="width:50%"></div></div><span class="rep-val" id="rv-fuqing">50</span></div>
+        <div class="rep-row"><span class="rep-name">天理教</span><div class="rep-bar-bg"><div class="rep-bar rb-tianli" id="rb-tianli" style="width:50%"></div></div><span class="rep-val" id="rv-tianli">50</span></div>
+        <div class="rep-row"><span class="rep-name">漕幫</span><div class="rep-bar-bg"><div class="rep-bar rb-cao" id="rb-cao" style="width:50%"></div></div><span class="rep-val" id="rv-cao">50</span></div>
+        <div class="rep-row"><span class="rep-name">五毒教</span><div class="rep-bar-bg"><div class="rep-bar rb-wudu" id="rb-wudu" style="width:50%"></div></div><span class="rep-val" id="rv-wudu">50</span></div>
+        <div class="rep-row"><span class="rep-name">散人</span><div class="rep-bar-bg"><div class="rep-bar rb-saren" id="rb-saren" style="width:50%"></div></div><span class="rep-val" id="rv-saren">50</span></div>
+      </div>
+    </div>
+
+    <!-- Clue panel -->
+    <div class="clue-panel" id="clue-panel">
+      <div class="clue-title">已知因果碎片</div>
+      <div class="clue-list" id="clue-list"></div>
+    </div>
+
+    <div class="history-section" id="history-section" style="display:none">
+      <div class="history-label">俠客日誌</div>
+      <div id="history-list"></div>
+    </div>
+  </main>
+</section>
+
+<!-- ===== ENDING ===== -->
+<section class="screen" id="screen-ending">
+  <svg style="width:120px;margin-bottom:1.5rem;opacity:0.3" viewBox="0 0 120 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5,15 Q30,5 60,15 Q90,25 115,12" stroke="rgba(44,58,74,0.6)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <div class="ending-title" id="ending-title">故事終結</div>
+  <p class="ending-text" id="ending-text"></p>
+  <button class="restart-btn" id="restart-btn">重新入亂世</button>
+</section>
+
+<script>
+// ====== WORLD BIBLE ======
+const WORLD = {
+  era: '大樑末年，鴉片戰爭後三十年',
+  factions: {
+    fuqing:  { name:'扶清會',  desc:'工業集權進步，但內藏臥底' },
+    tianli:  { name:'天理教',  desc:'傳統武學神秘，資金來自走私鴉片' },
+    cao:     { name:'漕幫',    desc:'控制水路，只想發財，誰贏幫誰' },
+    wudu:    { name:'五毒教',  desc:'毒藥霸主，教主被朝廷軟禁' },
+    saren:   { name:'散人聯盟',desc:'不選邊站，各有秘密的獨行俠' }
+  },
+  clues: [
+    { id:'c1', text:'天理教聖女與扶清會將軍曾是戀人', found: false },
+    { id:'c2', text:'漕幫鐵冊記錄了所有勢力的運毒路線', found: false },
+    { id:'c3', text:'五毒教深處囚禁著一隻會說話的三足蟾蜍', found: false },
+    { id:'c4', text:'最強火器「雷火銃」的設計圖藏在一首童謠裡', found: false },
+    { id:'c5', text:'開局救下的乞丐，其實是江湖百曉生的易容', found: false }
+  ]
+};
+
+let playerName='', playerOrigin='散人俠客', apiKey='', apiProvider='deepseek';
+let conversationHistory=[], chapterNum=1;
+let playerStats={ hp:100, mp:50, rank:'初學', faction:'無' };
+let factionRep={ fuqing:50, tianli:50, cao:50, wudu:50, saren:50 };
+let foundClues=[], isTyping=false, historyLog=[], demoIndex=0;
+
+// ====== SYSTEM PROMPT ======
+function buildSystemPrompt(){
+  const repStr = Object.entries(factionRep).map(([k,v])=>`${WORLD.factions[k].name}好感${v}`).join('，');
+  const clueStr = foundClues.length ? foundClues.join('；') : '尚無';
+  return `你是大樑末年武俠世界的說書人。以下是世界設定，必須嚴格遵守：
+
+【時代背景】${WORLD.era}。火器出現三十年，傳統武功地位動搖，江湖與朝廷的衝突進入新階段。
+
+【五大勢力】
+• 扶清會：工業、集權、進步，但組織內藏有其他勢力臥底，身份未知。
+• 天理教：傳統、個人修為、神秘，欲復興上古武學對抗火器，但資金來自走私鴉片。
+• 漕幫：控制水路經濟，中立，誰贏幫誰，重視利益。
+• 五毒教：掌握毒藥與解毒的絕對權力，但教主被朝廷秘密軟禁。
+• 散人聯盟：不選邊站的獨行俠群體，各有各的隱秘過去。
+• 朝廷：在暗中挑撥各方，不希望任何一方獨大。
+
+【因果碎片（可在故事中暗示，但勿直接揭露）】
+• 天理教聖女和扶清會將軍曾是戀人
+• 漕幫鐵冊記錄所有勢力運毒路線
+• 五毒教深處囚禁一隻會說話的三足蟾蜍
+• 最強火器「雷火銃」設計圖藏在一首童謠裡
+• 開局救下的乞丐，其實是江湖百曉生的易容
+
+【玩家資訊】
+• 名字：${playerName}，出身：${playerOrigin}
+• 氣血：${playerStats.hp}，內力：${playerStats.mp}，武功境界：${playerStats.rank}，目前陣營：${playerStats.faction}
+• 各方好感：${repStr}
+• 已知因果碎片：${clueStr}
+
+【輸出規則】必須輸出合法JSON，禁止JSON以外任何文字：
+{
+  "story": "故事正文（130-200字，白話古典混合，融入火器時代氛圍，末尾留懸念）",
+  "choices": ["選項一（20字內）","選項二（20字內）","選項三（20字內）"],
+  "stats": { "hp": 數字, "mp": 數字, "rank": "初學/入門/江湖好手/一流高手/絕世宗師", "faction": "無/扶清會/天理教/漕幫/五毒教/散人聯盟" },
+  "rep_delta": { "fuqing": 數字-10到10, "tianli": 數字-10到10, "cao": 數字-10到10, "wudu": 數字-10到10, "saren": 數字-10到10 },
+  "clue_found": "c1或c2或c3或c4或c5或null（若本回合暗示了某條因果碎片）",
+  "ending": false
+}
+若到達重大結局將ending設true。選項必須對各方勢力有不同傾向。`;
+}
+
+// ====== DEMO SCENES ======
+const DEMO=[
+  {story:`大樑末年，硝煙未散。\n\n廣州碼頭的晨霧裡，夾雜著海水與火藥的氣味。${'{name}'}，你剛踏上這座城市，便聽見碼頭工人壓低聲音竊竊私語——昨夜漕幫的一艘貨船在珠江被燒，扶清會的藍旗艦隊就在對岸靜靜停泊，炮管黑洞洞地指著天空。\n\n正當你穿行於人群之間，忽然一個衣衫襤褸的老乞丐跌跌撞撞地撞進你懷裡，同時遠處傳來一聲震耳的火槍聲……`, choices:['扶起乞丐，拉他躲入巷中','就地臥倒，觀察槍聲方向','趁亂跟隨人群撤向城牆']},
+  {story:`你扶起乞丐，他的眼神比普通乞丐清醒得多，嘴角甚至帶著幾分若有若無的笑意。\n\n「多謝俠士。」他的聲音沙啞，卻咬字清晰，「碼頭這場火，是天理教放的，但嫁禍給五毒教的毒煙彈……真正的主謀，在漕幫的貨倉裡。」\n\n他說完，從袖中掏出一塊破布，上面用炭筆潦草畫著一隻三足蟾蜍，遞給你後，轉身消失在霧中。槍聲越來越近……`, choices:['追上乞丐，問清他的身份','帶著破布前往漕幫貨倉','把此事報告給扶清會']},
+  {story:`漕幫的貨倉深處，燈光昏黃。\n\n你剛踏進門，便被三把刀架住脖子——漕幫的弟兄嗅到了外人的氣息。領頭的漕幫二當家，人稱「鐵算盤」的謝老爺，眯著眼看了你許久。\n\n「你是哪邊的人？」他的語氣不冷不熱，「扶清會給了你多少？還是天理教的老和尚派你來的？」\n\n倉庫一角，隱約傳來某種低沉的、不像人聲的哼鳴聲……`, choices:['坦白自己只是散人，無意得罪漕幫','謊稱自己是朝廷密探，以勢壓人','趁其不備，奪刀反制']}
+];
+
+// ====== DOM ======
+const screenIntro=document.getElementById('screen-intro');
+const screenGame=document.getElementById('screen-game');
+const screenEnding=document.getElementById('screen-ending');
+const storyText=document.getElementById('story-text');
+const cursorEl=document.getElementById('cursor');
+const chapterLabel=document.getElementById('chapter-label');
+const loadingEl=document.getElementById('loading');
+const errorBanner=document.getElementById('error-banner');
+const historySection=document.getElementById('history-section');
+const historyList=document.getElementById('history-list');
+const repPanel=document.getElementById('rep-panel');
+const cluePanel=document.getElementById('clue-panel');
+const clueList=document.getElementById('clue-list');
+const choiceBtns=[document.getElementById('c1'),document.getElementById('c2'),document.getElementById('c3')];
+
+document.getElementById('origin-group').addEventListener('click',e=>{
+  const btn=e.target.closest('.origin-btn');if(!btn)return;
+  document.querySelectorAll('.origin-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');playerOrigin=btn.dataset.origin;
+});
+document.getElementById('start-btn').addEventListener('click',startGame);
+document.getElementById('restart-btn').addEventListener('click',()=>location.reload());
+document.getElementById('player-name').addEventListener('keydown',e=>{if(e.key==='Enter')startGame();});
+
+function startGame(){
+  playerName=document.getElementById('player-name').value.trim()||'無名俠客';
+  apiKey=document.getElementById('api-key-input').value.trim();
+  apiProvider=document.getElementById('api-provider').value;
+  screenIntro.classList.remove('active');
+  screenGame.classList.add('active');
+  document.getElementById('topbar-name').textContent=playerName+' · 亂世江湖';
+  updateStats();generateStory(null);
+}
+
+function updateStats(){
+  document.getElementById('stat-hp').textContent=playerStats.hp;
+  document.getElementById('stat-mp').textContent=playerStats.mp;
+  document.getElementById('stat-rank').textContent=playerStats.rank;
+  document.getElementById('stat-faction').textContent=playerStats.faction;
+}
+
+function updateRepBars(){
+  repPanel.style.display='block';
+  Object.entries(factionRep).forEach(([k,v])=>{
+    const bar=document.getElementById('rb-'+k);
+    const val=document.getElementById('rv-'+k);
+    if(bar){ bar.style.width=Math.max(2,Math.min(100,v))+'%'; }
+    if(val){ val.textContent=v; }
+  });
+}
+
+function showClue(clueId){
+  const clue=WORLD.clues.find(c=>c.id===clueId);
+  if(!clue||clue.found)return;
+  clue.found=true;
+  foundClues.push(clue.text);
+  cluePanel.classList.add('show');
+  const item=document.createElement('div');
+  item.className='clue-item';
+  item.textContent=clue.text;
+  clueList.appendChild(item);
+}
+
+async function typewriter(text,speed=40){
+  storyText.textContent='';cursorEl.style.display='inline-block';isTyping=true;
+  for(const c of text){storyText.textContent+=c;await new Promise(r=>setTimeout(r,speed));}
+  cursorEl.style.display='none';isTyping=false;
+}
+
+function showChoices(choices,delay=0){
+  choiceBtns.forEach((btn,i)=>{
+    btn.classList.remove('visible');btn.disabled=true;
+    const t=choices[i]||'';
+    btn.querySelector('.choice-text').textContent=t;
+    btn.style.display=t?'flex':'none';
+    if(t)setTimeout(()=>{btn.classList.add('visible');btn.disabled=false;},delay+i*140);
+  });
+}
+function disableChoices(){choiceBtns.forEach(b=>{b.disabled=true;});}
+
+function addToHistory(choice,summary){
+  if(!choice)return;
+  historyLog.unshift({choice,summary});
+  if(historyLog.length>5)historyLog.pop();
+  historySection.style.display='block';
+  historyList.innerHTML=historyLog.map(h=>`<div class="history-item"><span class="hi-c">▸ ${h.choice}</span>${h.summary}</div>`).join('');
+}
+
+async function callAI(userMsg){
+  const msgs=[{role:'system',content:buildSystemPrompt()},...conversationHistory,{role:'user',content:userMsg}];
+  const endpoint=apiProvider==='openai'?'https://dpapi.cn/v1/chat/completions':'https://dpapi.cn/v1/chat/completions';
+  const model=apiProvider==='openai'?'gpt-4o-mini':'deepseek-chat';
+  const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${sk-XpnZz2oeDzHsRfX6B67e19C5F2E54307B2956674EfE3074a}`},body:JSON.stringify({model,messages:msgs,response_format:{type:'json_object'},temperature:0.88,max_tokens:700})});
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
+  const data=await res.json();
+  const content=data.choices[0].message.content;
+  conversationHistory.push({role:'user',content:userMsg},{role:'assistant',content});
+  if(conversationHistory.length>26)conversationHistory=conversationHistory.slice(-26);
+  return JSON.parse(content);
+}
+
+function getDemoScene(){
+  const s=DEMO[demoIndex%DEMO.length];demoIndex++;
+  return{story:s.story.replace('{name}',playerName),choices:s.choices,stats:playerStats,rep_delta:{fuqing:0,tianli:0,cao:0,wudu:0,saren:0},clue_found: demoIndex===2?'c5':null,ending:false};
+}
+
+async function generateStory(choiceMade){
+  if(isTyping)return;
+  disableChoices();errorBanner.classList.remove('show');loadingEl.classList.add('active');
+  const userMsg=choiceMade?`我選擇：${choiceMade}`:`請開始故事。玩家${playerName}，出身${playerOrigin}，大樑末年，初入亂世。`;
+  let result;
+  try{
+    if(!apiKey){await new Promise(r=>setTimeout(r,950));result=getDemoScene();}
+    else{result=await callAI(userMsg);}
+  }catch(err){
+    loadingEl.classList.remove('active');
+    errorBanner.textContent=`⚠️ 無法連接 AI：${err.message}`;
+    errorBanner.classList.add('show');
+    choiceBtns.forEach(b=>{if(b.style.display!=='none')b.disabled=false;});
+    return;
+  }
+  loadingEl.classList.remove('active');
+
+  // Update stats
+  if(result.stats)playerStats={...playerStats,...result.stats};
+  updateStats();
+
+  // Update faction rep
+  if(result.rep_delta){
+    Object.entries(result.rep_delta).forEach(([k,v])=>{
+      if(factionRep[k]!==undefined) factionRep[k]=Math.max(0,Math.min(100,factionRep[k]+(v||0)));
+    });
+    updateRepBars();
+  }
+
+  // Clue
+  if(result.clue_found) showClue(result.clue_found);
+
+  chapterLabel.textContent=`第${chapterNum}回`;chapterNum++;
+  if(choiceMade)addToHistory(choiceMade,result.story.slice(0,48)+'…');
+
+  await typewriter(result.story);
+  if(result.ending){setTimeout(()=>showEnding(result.story),1500);return;}
+  showChoices(result.choices||[],200);
+  choiceBtns.forEach(btn=>{
+    btn.onclick=()=>{const t=btn.querySelector('.choice-text').textContent;if(t)generateStory(t);};
+  });
+}
+
+function showEnding(finalStory){
+  const highestRep=Object.entries(factionRep).sort((a,b)=>b[1]-a[1])[0];
+  const faction=WORLD.factions[highestRep[0]].name;
+  document.getElementById('ending-title').textContent=`${playerName} — ${faction}的傳說`;
+  document.getElementById('ending-text').textContent=finalStory;
+  screenEnding.classList.add('active');
+}
+</script>
+</body>
+</html>
