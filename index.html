@@ -3,423 +3,237 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>大樑末年 — 測試版本1</title>
+<title>書劍 — 測試版本2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-
 :root {
-  --ink:        #2c3a4a;
-  --ink-light:  #4a5e72;
-  --ink-faint:  #8fa8bf;
-  --ink-ghost:  #c8d8e8;
-  --wash-blue:  #deeaf5;
-  --wash-mid:   #eaf3fa;
-  --wash-light: #f4f9fd;
-  --white:      #fafcfe;
-  --border:     rgba(44,58,74,0.12);
-  --border-mid: rgba(44,58,74,0.18);
-  --card-bg:    rgba(250,252,254,0.82);
-  --accent:     #3a6b8a;
-  --accent-dim: #5b8fac;
-  --danger:     #7a3030;
-  --shadow-sm:  0 2px 12px rgba(44,58,74,0.08);
-  --shadow-md:  0 8px 32px rgba(44,58,74,0.1);
+  --bg-deep:#1a1510; --bg-mid:#211a14; --bg-card:rgba(42,33,26,0.92); --bg-card2:rgba(36,29,23,0.9);
+  --ink: #e8d8c0; --ink-light: #b09878; --ink-faint: #8a7060; --ink-ghost: #6a5a4a;
+  --white: #1a1510; --border: rgba(74,58,46,0.6); --border-mid: rgba(100,74,58,0.5);
+  --card-bg: rgba(42,33,26,0.92); --accent: #c0392b; --accent-dim: #8a2a1e;
+  --danger: #e04030; --gold: #c8922a; --gold-dim: rgba(200,146,42,0.15);
+  --shadow-sm: 0 2px 12px rgba(0,0,0,0.4); --shadow-md: 0 8px 32px rgba(0,0,0,0.55);
   --transition: 220ms cubic-bezier(0.16,1,0.3,1);
-  --font-display: 'Ma Shan Zheng', 'Noto Serif SC', serif;
-  --font-body: 'Noto Serif SC', serif;
+  --font-display: 'Ma Shan Zheng','Noto Serif SC',serif;
+  --font-body: 'Noto Serif SC',serif;
+  --red:#c0392b; --red-dim:#8a2a1e; --red-bright:#e04030;
+  --ash:#a89880; --ash-light:#b09878; --text-main:#e8d8c0; --text-dim:#b09878; --text-ghost:#6a5a4a;
 }
-
-body {
-  min-height: 100dvh;
-  font-family: var(--font-body);
-  color: var(--ink);
-  background: var(--white);
-  overflow-x: hidden;
-  position: relative;
-}
-
-.bg-wash {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+body { min-height:100dvh; font-family:var(--font-body); color:var(--text-main); background:var(--bg-deep); overflow-x:hidden; }
+.bg-wash { position:fixed; inset:0; z-index:0; pointer-events:none;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180,210,230,0.25) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 40% at 10% 80%, rgba(180,200,220,0.1) 0%, transparent 60%),
-    linear-gradient(180deg, #eaf4fb 0%, #f4f9fd 50%, #fafcfe 100%);
-}
-.bg-wash::after {
-  content: '';
-  position: absolute; inset: 0; opacity: 0.025;
-  background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(44,58,74,1) 3px, rgba(44,58,74,1) 3.5px),
-    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(44,58,74,1) 3px, rgba(44,58,74,1) 3.5px);
-}
-
-/* Drifting line-art clouds */
-.scene-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.cloud-group { position: absolute; animation: cloud-drift linear infinite; opacity: 0; }
-.cg-1 { top: 6%;  animation-duration: 90s;  animation-delay: 0s; }
-.cg-2 { top: 14%; animation-duration: 130s; animation-delay: -40s; }
-.cg-3 { top: 22%; animation-duration: 100s; animation-delay: -70s; }
-.cg-4 { top: 38%; animation-duration: 80s;  animation-delay: -20s; }
-.cg-5 { top: 5%;  animation-duration: 160s; animation-delay: -90s; }
-.cg-6 { top: 30%; animation-duration: 110s; animation-delay: -55s; }
-@keyframes cloud-drift {
-  0%   { left: -280px; opacity: 0; }
-  4%   { opacity: 1; }
-  94%  { opacity: 1; }
-  100% { left: 110%; opacity: 0; }
-}
-
-.landscape-layer {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  z-index: 0; pointer-events: none; height: 220px;
-}
-
-.screen { position: relative; z-index: 1; display: none; }
-.screen.active { display: flex; }
+    radial-gradient(ellipse 90% 55% at 50% 0%,rgba(160,40,20,0.14) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%,rgba(100,30,10,0.1) 0%,transparent 50%),
+    linear-gradient(175deg,#1a1510 0%,#1e1812 40%,#16120e 100%); }
+.bg-wash::after { content:''; position:absolute; inset:0; opacity:0.022;
+  background-image: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(44,58,74,1) 3px,rgba(44,58,74,1) 3.5px),
+    repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(44,58,74,1) 3px,rgba(44,58,74,1) 3.5px); }
+.scene-layer { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.cloud-group { position:absolute; animation:cloud-drift linear infinite; opacity:0; }
+.cg-1{top:5%; animation-duration:95s; animation-delay:0s;}
+.cg-2{top:13%; animation-duration:135s; animation-delay:-42s;}
+.cg-3{top:21%; animation-duration:105s; animation-delay:-68s;}
+.cg-4{top:36%; animation-duration:82s; animation-delay:-22s;}
+.cg-5{top:8%; animation-duration:155s; animation-delay:-88s;}
+@keyframes cloud-drift { 0%{left:-280px;opacity:0} 4%{opacity:1} 94%{opacity:1} 100%{left:110%;opacity:0} }
+.landscape-layer { position:fixed; bottom:0; left:0; right:0; z-index:0; pointer-events:none; height:200px; }
+.screen { position:relative; z-index:1; display:none; }
+.screen.active { display:flex; }
 
 /* ===== INTRO ===== */
-#screen-intro {
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100dvh;
-  padding: 2.5rem 1rem 5rem;
-  text-align: center;
-}
+#screen-intro { flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:2rem 1rem 5rem; text-align:center; }
+.brush-deco { width:200px; margin-bottom:1rem; opacity:0.48; }
+.intro-era { font-size:0.65rem; color:var(--text-ghost); letter-spacing:0.5em; margin-bottom:0.3rem; font-weight:300; }
+.intro-title { font-family:var(--font-display); font-size:clamp(2.8rem,9vw,5rem); color:var(--text-main); letter-spacing:0.2em; line-height:1.1; margin-bottom:0.3rem; text-shadow:0 0 40px rgba(192,57,43,0.4),0 2px 0 rgba(0,0,0,0.5); }
+.intro-subtitle { font-size:0.75rem; color:var(--ash); letter-spacing:0.4em; margin-bottom:0.5rem; font-weight:300; }
+.version-badge { display:inline-block; font-size:0.58rem; letter-spacing:0.22em; color:var(--red); border:1px solid rgba(192,57,43,0.35); border-radius:2px; padding:0.13rem 0.55rem; margin-bottom:1.5rem; background:rgba(192,57,43,0.06); }
+.brush-line { width:160px; height:1px; background:linear-gradient(90deg,transparent,rgba(192,57,43,0.45),transparent); margin:0 auto 1.75rem; }
 
-.brush-deco { width: 200px; margin-bottom: 1.2rem; opacity: 0.5; }
+/* Origin selection */
+.intro-card { background:rgba(42,33,26,0.93); border:1px solid var(--border); border-radius:1.5rem; padding:1.75rem 1.75rem 1.5rem; width:100%; max-width:400px; backdrop-filter:blur(16px); box-shadow:var(--shadow-md),0 0 0 1px rgba(74,58,46,0.3); display:flex; flex-direction:column; gap:1rem; }
+.form-label { display:block; font-size:0.7rem; color:var(--text-dim); letter-spacing:0.28em; margin-bottom:0.35rem; font-weight:300; }
+.name-input { width:100%; background:rgba(26,21,16,0.85); border:1px solid var(--border); border-radius:0.6rem; padding:0.65rem 1rem; font-family:var(--font-body); font-size:0.95rem; color:var(--text-main); text-align:center; letter-spacing:0.12em; outline:none; transition:border-color var(--transition),box-shadow var(--transition); }
+.name-input:focus { border-color:var(--red-dim); box-shadow:0 0 0 3px rgba(192,57,43,0.15); }
+.name-input::placeholder { color:var(--text-ghost); }
 
-.intro-era {
-  font-size: 0.7rem;
-  color: var(--ink-faint);
-  letter-spacing: 0.45em;
-  margin-bottom: 0.4rem;
-  font-weight: 300;
-}
-.intro-title {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 10vw, 5.5rem);
-  color: var(--ink);
-  letter-spacing: 0.2em;
-  line-height: 1.1;
-  margin-bottom: 0.3rem;
-  text-shadow: 1px 1px 0 rgba(44,58,74,0.07), 0 2px 8px rgba(44,58,74,0.07);
-}
-.intro-subtitle {
-  font-size: clamp(0.7rem,2vw,0.85rem);
-  color: var(--ink-faint);
-  letter-spacing: 0.38em;
-  margin-bottom: 0.5rem;
-  font-weight: 300;
-}
-.version-badge {
-  display: inline-block;
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  color: var(--danger);
-  border: 1px solid rgba(122,48,48,0.25);
-  border-radius: 3px;
-  padding: 0.15rem 0.5rem;
-  margin-bottom: 1.8rem;
-  background: rgba(122,48,48,0.04);
-}
-.brush-line { width: 180px; height: 1px; background: linear-gradient(90deg, transparent, var(--ink-faint), transparent); margin: 0 auto 2rem; }
+/* Page system for origins */
+.origin-page { display:none; }
+.origin-page.active { display:flex; flex-direction:column; gap:0.4rem; }
+.origin-btn { background:rgba(26,21,16,0.65); border:1px solid var(--border); border-radius:0.75rem; padding:0.6rem 0.9rem; color:var(--text-dim); font-family:var(--font-body); font-size:0.8rem; cursor:pointer; transition:all var(--transition); text-align:left; display:flex; align-items:center; gap:0.65rem; font-weight:300; line-height:1.5; }
+.origin-btn:hover { border-color:var(--red-dim); color:var(--text-main); background:rgba(192,57,43,0.08); }
+.origin-btn.selected { border-color:var(--red); color:#e04030; background:rgba(192,57,43,0.12); box-shadow:0 0 12px rgba(192,57,43,0.15); }
+.origin-btn .ob-icon { font-size:1.1em; flex-shrink:0; }
+.origin-btn .ob-text { flex:1; }
+.origin-btn .ob-hint { font-size:0.6rem; white-space:nowrap; line-height:1.7; text-align:right; }
+.origin-btn .ob-hint .hint-label { font-size:0.58rem; color:#d4b890; display:block; letter-spacing:0.12em; margin-bottom:1px; font-weight:500; }
+.origin-btn .ob-hint .hint-val { color:#ffd080; font-weight:400; font-size:0.68rem; }
+.origin-btn .ob-hint .hint-val.neutral { color:#70d0f0; font-weight:400; }
+.origin-btn .ob-hint .hint-val.attr { color:#70e890; font-weight:400; }
+.origin-btn:hover .ob-hint .hint-label { color:#e8d0a0; }
+.page-nav { display:flex; gap:0.5rem; justify-content:center; }
+.page-nav-btn { background:rgba(26,21,16,0.7); border:1px solid var(--border); border-radius:0.5rem; padding:0.4rem 0.9rem; font-family:var(--font-body); font-size:0.72rem; color:var(--text-ghost); cursor:pointer; transition:all var(--transition); letter-spacing:0.12em; }
+.page-nav-btn:hover { border-color:var(--red-dim); color:var(--text-main); }
+.page-nav-btn.active-pg { border-color:var(--red); color:#e04030; background:rgba(192,57,43,0.08); }
 
-/* Faction strip */
-.faction-strip {
-  display: flex;
-  gap: 0.4rem;
-  margin-bottom: 1.8rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 400px;
-}
-.faction-tag {
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
-  padding: 0.2rem 0.55rem;
-  border-radius: 3px;
-  border: 1px solid;
-  font-weight: 300;
-  white-space: nowrap;
-}
-.ft-fuqing  { color: #2d5986; border-color: rgba(45,89,134,0.3); background: rgba(45,89,134,0.06); }
-.ft-tianli  { color: #5a3a1a; border-color: rgba(90,58,26,0.3);  background: rgba(90,58,26,0.06); }
-.ft-cao     { color: #2a6040; border-color: rgba(42,96,64,0.3);  background: rgba(42,96,64,0.06); }
-.ft-wudu    { color: #5a1a5a; border-color: rgba(90,26,90,0.3);  background: rgba(90,26,90,0.06); }
-.ft-saren   { color: #3a3a5a; border-color: rgba(58,58,90,0.3);  background: rgba(58,58,90,0.06); }
+.start-btn { width:100%; background:linear-gradient(135deg,var(--red-dim) 0%,var(--red) 100%); border:1px solid rgba(192,57,43,0.5); border-radius:0.7rem; padding:0.82rem; color:var(--text-main); font-family:var(--font-display); font-size:1.15rem; letter-spacing:0.22em; cursor:pointer; box-shadow:0 4px 20px rgba(192,57,43,0.3); transition:all var(--transition); }
+.start-btn:hover { background:linear-gradient(135deg,var(--red) 0%,var(--red-bright) 100%); transform:translateY(-1px); box-shadow:0 6px 24px rgba(192,57,43,0.4); }
+.start-btn:active { transform:translateY(0); }
 
-/* Card */
-.intro-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-mid);
-  border-radius: 1.5rem;
-  padding: 1.75rem 2rem;
-  width: 100%;
-  max-width: 380px;
-  backdrop-filter: blur(16px);
-  box-shadow: var(--shadow-md), 0 0 0 4px rgba(255,255,255,0.55);
-  display: flex; flex-direction: column; gap: 1.15rem;
-}
-.form-label {
-  display: block; font-size: 0.7rem; color: var(--ink-faint);
-  letter-spacing: 0.28em; margin-bottom: 0.38rem; font-weight: 300;
-}
-.name-input {
-  width: 100%; background: rgba(255,255,255,0.9);
-  border: 1px solid var(--border-mid); border-radius: 0.6rem;
-  padding: 0.65rem 1rem; font-family: var(--font-body);
-  font-size: 0.95rem; color: var(--ink); text-align: center;
-  letter-spacing: 0.12em; outline: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
-}
-.name-input:focus { border-color: var(--accent-dim); box-shadow: 0 0 0 3px rgba(58,107,138,0.1); }
-.name-input::placeholder { color: var(--ink-ghost); }
-
-.origin-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.45rem; }
-.origin-btn {
-  background: rgba(255,255,255,0.7);
-  border: 1px solid var(--border); border-radius: 0.7rem;
-  padding: 0.6rem 0.3rem; color: var(--ink-faint);
-  font-family: var(--font-body); font-size: 0.68rem;
-  cursor: pointer; transition: all var(--transition);
-  text-align: center; line-height: 1.6; font-weight: 300;
-}
-.origin-btn:hover { border-color: var(--accent-dim); color: var(--ink); }
-.origin-btn.selected { border-color: var(--accent); color: var(--accent); background: rgba(58,107,138,0.06); font-weight: 500; }
-.origin-btn .icon { font-size: 1.15em; display: block; margin-bottom: 2px; }
-
-.start-btn {
-  width: 100%; background: var(--ink); border: none; border-radius: 0.7rem;
-  padding: 0.85rem; color: #f4f9fd; font-family: var(--font-display);
-  font-size: 1.2rem; letter-spacing: 0.25em; cursor: pointer;
-  box-shadow: 0 4px 16px rgba(44,58,74,0.25); transition: all var(--transition); margin-top: 0.15rem;
-}
-.start-btn:hover { background: var(--ink-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(44,58,74,0.3); }
-.start-btn:active { transform: translateY(0); }
-
-.api-details { width: 100%; max-width: 380px; margin-top: 0.6rem; }
-.api-details summary { font-size: 0.68rem; color: var(--ink-ghost); letter-spacing: 0.18em; cursor: pointer; list-style: none; text-align: center; padding: 0.4rem; }
-.api-details summary::-webkit-details-marker { display: none; }
-.api-details summary::after { content: ' ▾'; }
-details[open] summary::after { content: ' ▴'; }
-.api-inner { background: rgba(250,252,254,0.88); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1rem; margin-top: 0.4rem; backdrop-filter: blur(8px); display: flex; flex-direction: column; gap: 0.5rem; }
-.api-inner select, .api-inner input[type="password"] { width: 100%; background: rgba(255,255,255,0.95); border: 1px solid var(--border-mid); border-radius: 0.45rem; padding: 0.45rem 0.7rem; font-family: var(--font-body); font-size: 0.75rem; color: var(--ink); outline: none; }
-.api-note { font-size: 0.65rem; color: var(--ink-ghost); line-height: 1.8; }
-.api-note a { color: var(--accent-dim); }
+.api-details { width:100%; max-width:400px; margin-top:0.5rem; }
+.api-details summary { font-size:0.68rem; color:var(--text-ghost); letter-spacing:0.18em; cursor:pointer; list-style:none; text-align:center; padding:0.4rem; }
+.api-details summary::-webkit-details-marker { display:none; }
+.api-details summary::after { content:' ▾'; }
+details[open] summary::after { content:' ▴'; }
+.api-inner { background:rgba(26,21,16,0.93); border:1px solid var(--border); border-radius:0.75rem; padding:0.9rem; margin-top:0.4rem; display:flex; flex-direction:column; gap:0.5rem; }
+.api-inner select, .api-inner input[type="password"] { width:100%; background:rgba(26,21,16,0.9); border:1px solid var(--border); border-radius:0.45rem; padding:0.42rem 0.7rem; font-family:var(--font-body); font-size:0.75rem; color:var(--text-main); outline:none; }
+.api-note { font-size:0.65rem; color:var(--text-ghost); line-height:1.8; }
+.api-note a { color:var(--accent-dim); }
 
 /* ===== GAME ===== */
-#screen-game { flex-direction: column; min-height: 100dvh; }
+#screen-game { flex-direction:column; min-height:100dvh; }
+.topbar { position:sticky; top:0; z-index:10; background:rgba(26,21,16,0.93); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0.55rem 1.25rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem; box-shadow:0 2px 16px rgba(0,0,0,0.45); }
+.topbar-left { display:flex; flex-direction:column; gap:0.08rem; }
+.topbar-title { font-family:var(--font-display); font-size:1rem; color:var(--text-main); letter-spacing:0.18em; white-space:nowrap; }
+.topbar-sub { font-size:0.55rem; color:var(--text-ghost); letter-spacing:0.18em; font-weight:300; }
 
-.topbar {
-  position: sticky; top: 0; z-index: 10;
-  background: rgba(250,252,254,0.84); backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--border);
-  padding: 0.55rem 1.5rem;
-  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
-  box-shadow: 0 1px 8px rgba(44,58,74,0.06);
-}
-.topbar-left { display: flex; flex-direction: column; gap: 0.1rem; }
-.topbar-title { font-family: var(--font-display); font-size: 1.05rem; color: var(--ink); letter-spacing: 0.18em; white-space: nowrap; }
-.topbar-era { font-size: 0.58rem; color: var(--ink-ghost); letter-spacing: 0.2em; font-weight: 300; }
-.stats-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-.stat-chip { display: flex; align-items: center; gap: 0.2rem; font-size: 0.65rem; background: rgba(220,235,245,0.4); border: 1px solid var(--border); border-radius: 999px; padding: 0.15rem 0.55rem; white-space: nowrap; font-weight: 300; }
-.stat-chip .sl { color: var(--ink-ghost); }
-.stat-chip .sv { color: var(--ink); font-weight: 500; }
-.stat-chip.hp .sv { color: #7a3030; }
-.stat-chip.mp .sv { color: #2d6b5a; }
-.stat-chip.rank .sv { color: var(--accent); }
-.stat-chip.faction .sv { color: #5a3a1a; }
+/* Stats panel - compact */
+.stats-grid { display:grid; grid-template-columns:repeat(4,auto); gap:0.3rem; }
+.stat-chip { display:flex; align-items:center; gap:0.22rem; font-size:0.78rem; background:rgba(26,21,16,0.75); border:1px solid var(--border); border-radius:999px; padding:0.22rem 0.72rem; white-space:nowrap; }
+.stat-chip .sl { color:var(--text-ghost); font-size:0.8em; } .stat-chip.hp .sl { color:#ffcc44; font-size:1em; } .stat-chip.loc .sv { color:#3a7a9a; } .stat-chip.qi { background:rgba(20,40,80,0.08); border-color:rgba(58,107,170,0.2); }
+.stat-chip .sv { color:var(--text-main); font-weight:600; font-size:0.95em; }
+.stat-chip.hp .sv { color:#ff8870; }
+.stat-chip.mp .sv { color:#2d6b5a; }
+.stat-chip.gold .sv { color:#b8ccdd; }
+.stat-chip.rank .sv { color:var(--accent); }
 
-.game-layout { flex: 1; max-width: 760px; margin: 0 auto; width: 100%; padding: 1.75rem 1rem 5rem; display: flex; flex-direction: column; gap: 1.15rem; }
+.game-layout { flex:1; max-width:780px; margin:0 auto; width:100%; padding:1.5rem 1rem 5rem; display:flex; flex-direction:column; gap:1rem; }
 
 /* Story card */
-.story-card {
-  background: var(--card-bg); border: 1px solid var(--border-mid); border-radius: 1.25rem;
-  padding: 1.75rem 2.1rem; box-shadow: var(--shadow-md), 0 0 0 3px rgba(255,255,255,0.5);
-  backdrop-filter: blur(14px); min-height: 180px; position: relative;
-}
-.story-card::before {
-  content: ''; position: absolute; top: 1rem; right: 1.25rem;
-  width: 38px; height: 38px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M5,35 Q12,5 35,8' stroke='rgba(44,58,74,0.11)' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M10,38 Q18,12 38,14' stroke='rgba(44,58,74,0.06)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
-}
-.chapter-label { font-size: 0.65rem; color: var(--ink-faint); letter-spacing: 0.32em; margin-bottom: 0.8rem; display: block; font-weight: 300; }
-#story-text { font-size: 0.97rem; line-height: 2.18; color: var(--ink); white-space: pre-wrap; font-weight: 300; }
-.cursor { display: inline-block; width: 1.5px; height: 1.1em; background: var(--accent); margin-left: 2px; vertical-align: text-bottom; animation: blink 1s ease-in-out infinite; }
+.story-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,rgba(192,57,43,0.55),transparent); }
+.story-card { background:rgba(36,29,23,0.92); border:1px solid var(--border); border-top:1px solid rgba(192,57,43,0.28); border-radius:1.1rem; padding:1.65rem 1.85rem; box-shadow:var(--shadow-md),inset 0 1px 0 rgba(192,57,43,0.08); min-height:150px; position:relative; overflow:hidden; }
+.story-card::before { content:''; position:absolute; top:1rem; right:1.2rem; width:36px; height:36px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M5,35 Q12,5 35,8' stroke='rgba(44,58,74,0.1)' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3Cpath d='M10,38 Q18,12 38,14' stroke='rgba(44,58,74,0.05)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat; }
+.chapter-label { font-size:0.75rem; color:#b06820; letter-spacing:0.28em; margin-bottom:0.75rem; display:block; font-weight:500; text-shadow:0 0 10px rgba(180,104,32,0.2); }
+#story-text { font-size:0.96rem; line-height:2.15; color:var(--text-main); white-space:pre-wrap; font-weight:300; }
+.cursor { display:inline-block; width:1.5px; height:1.1em; background:var(--red); margin-left:2px; vertical-align:text-bottom; animation:blink 1s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-/* Faction tag inline */
-.faction-inline {
-  display: inline-block; font-size: 0.62rem; letter-spacing: 0.1em;
-  padding: 0.1rem 0.4rem; border-radius: 2px; border: 1px solid;
-  margin: 0 0.1rem; vertical-align: middle; font-weight: 400;
-}
+/* Action buttons — 5 choices */
+.choices-section { display:flex; flex-direction:column; gap:0.48rem; }
+.choices-label { font-size:0.62rem; color:var(--text-ghost); letter-spacing:0.28em; font-weight:300; padding-left:0.2rem; }
+.choice-btn { background:rgba(30,24,18,0.85); border:1px solid var(--border); border-radius:0.8rem; padding:0.78rem 1rem; color:var(--text-dim); font-family:var(--font-body); font-size:0.87rem; font-weight:300; text-align:left; cursor:pointer; transition:all var(--transition); display:flex; align-items:center; gap:0.65rem; line-height:1.65; backdrop-filter:blur(6px); box-shadow:0 2px 8px rgba(0,0,0,0.3); opacity:0; transform:translateY(8px); }
+.choice-btn.visible { opacity:1; transform:translateY(0); transition:opacity .42s ease,transform .42s ease,background var(--transition),border-color var(--transition); }
+.choice-btn:hover { background:rgba(192,57,43,0.1); border-color:var(--red-dim); color:var(--text-main); transform:translateX(6px); box-shadow:0 2px 12px rgba(192,57,43,0.15); }
+.choice-btn:active { transform:translateX(2px); }
+.choice-btn:disabled { opacity:.3; cursor:not-allowed; transform:none; }
+.choice-num { width:24px; height:24px; border-radius:50%; border:1px solid var(--border-mid); color:var(--text-dim); font-size:0.62rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:400; }
 
-/* Clue panel */
-.clue-panel {
-  background: rgba(90,58,26,0.04);
-  border: 1px solid rgba(90,58,26,0.14);
-  border-radius: 0.9rem;
-  padding: 0.9rem 1.1rem;
-  display: none;
-}
-.clue-panel.show { display: block; }
-.clue-title { font-size: 0.65rem; color: rgba(90,58,26,0.7); letter-spacing: 0.28em; margin-bottom: 0.5rem; font-weight: 300; }
-.clue-list { display: flex; flex-direction: column; gap: 0.3rem; }
-.clue-item { font-size: 0.72rem; color: var(--ink-light); line-height: 1.7; font-weight: 300; padding-left: 0.8rem; position: relative; }
-.clue-item::before { content: '◆'; position: absolute; left: 0; font-size: 0.4em; top: 0.45em; color: rgba(90,58,26,0.5); }
+/* Status panels */
+.panels-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+@media(max-width:600px){ .panels-row{grid-template-columns:1fr;} }
 
-.loading-indicator { display: none; align-items: center; gap: 0.75rem; color: var(--ink-faint); font-size: 0.78rem; padding: 0.5rem 0.25rem; font-weight: 300; }
-.loading-indicator.active { display: flex; }
-.loading-dots { display: flex; gap: 4px; }
-.loading-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-faint); animation: pdot 1.4s ease-in-out infinite; }
-.loading-dots span:nth-child(2) { animation-delay:.2s; }
-.loading-dots span:nth-child(3) { animation-delay:.4s; }
-@keyframes pdot { 0%,80%,100%{opacity:.25;transform:scale(.8)} 40%{opacity:1;transform:scale(1.2)} }
+.panel-card { background:rgba(30,24,18,0.9); border:1px solid var(--border); border-radius:0.9rem; padding:0.9rem 1rem; backdrop-filter:blur(8px); }
+.panel-title { font-size:0.62rem; color:var(--text-ghost); letter-spacing:0.25em; margin-bottom:0.55rem; font-weight:300; }
 
-.error-banner { display: none; background: rgba(120,40,40,0.07); border: 1px solid rgba(120,40,40,0.2); border-radius: 0.65rem; padding: 0.7rem 1rem; font-size: 0.78rem; color: #7a3030; line-height: 1.7; }
-.error-banner.show { display: block; }
+/* Faction rep bars */
+.rep-row { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.32rem; }
+.rep-name { font-size:0.65rem; color:var(--text-dim); width:52px; flex-shrink:0; font-weight:300; }
+.rep-bar-bg { flex:1; height:3px; background:rgba(44,58,74,0.08); border-radius:2px; overflow:hidden; }
+.rep-bar { height:100%; border-radius:2px; transition:width 0.7s ease; min-width:2px; }
+.rb-court { background:#2d5986; }
+.rb-sanfan { background:#8a5a1a; }
+.rb-wulin { background:#2a6040; }
+.rb-xuelian { background:#7a2a7a; }
+.rb-zhuhong { background:#7a3030; }
+.rep-val { font-size:0.58rem; color:var(--text-ghost); width:28px; text-align:right; flex-shrink:0; }
 
-.choices-section { display: flex; flex-direction: column; gap: 0.5rem; }
-.choices-label { font-size: 0.65rem; color: var(--ink-ghost); letter-spacing: 0.28em; font-weight: 300; padding-left: 0.2rem; }
-.choice-btn {
-  background: var(--card-bg); border: 1px solid var(--border-mid); border-radius: 1rem;
-  padding: 0.82rem 1rem; color: var(--ink-light); font-family: var(--font-body);
-  font-size: 0.875rem; font-weight: 300; text-align: left; cursor: pointer;
-  transition: all var(--transition); display: flex; align-items: center; gap: 0.7rem;
-  line-height: 1.7; backdrop-filter: blur(8px); box-shadow: var(--shadow-sm);
-  opacity: 0; transform: translateY(8px);
-}
-.choice-btn.visible { opacity: 1; transform: translateY(0); transition: opacity .45s ease, transform .45s ease, background var(--transition), border-color var(--transition); }
-.choice-btn:hover { background: rgba(220,235,245,0.55); border-color: var(--accent-dim); color: var(--ink); transform: translateX(5px); box-shadow: 0 4px 16px rgba(44,58,74,0.1); }
-.choice-btn:active { transform: translateX(2px); }
-.choice-btn:disabled { opacity:.32; cursor:not-allowed; transform:none; }
-.choice-num { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border-mid); color: var(--ink-faint); font-size: 0.65rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 300; }
+/* Attr bars */
+.attr-row { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.28rem; }
+.attr-name { font-size:0.62rem; color:var(--text-dim); width:36px; flex-shrink:0; font-weight:300; }
+.attr-bar-bg { flex:1; height:3px; background:rgba(44,58,74,0.07); border-radius:2px; overflow:hidden; }
+.attr-bar { height:100%; border-radius:2px; background:rgba(58,107,138,0.5); transition:width 0.6s ease; }
+.attr-val { font-size:0.58rem; color:var(--text-ghost); width:22px; text-align:right; flex-shrink:0; }
 
-/* Faction reputation panel */
-.rep-panel {
-  background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem;
-  padding: 1rem 1.2rem; backdrop-filter: blur(8px);
-}
-.rep-title { font-size: 0.65rem; color: var(--ink-ghost); letter-spacing: 0.28em; margin-bottom: 0.65rem; font-weight: 300; }
-.rep-list { display: flex; flex-direction: column; gap: 0.42rem; }
-.rep-row { display: flex; align-items: center; gap: 0.6rem; }
-.rep-name { font-size: 0.68rem; color: var(--ink-light); width: 56px; flex-shrink: 0; font-weight: 300; }
-.rep-bar-bg { flex: 1; height: 3px; background: rgba(44,58,74,0.08); border-radius: 2px; overflow: hidden; }
-.rep-bar { height: 100%; border-radius: 2px; transition: width 0.8s ease; min-width: 2px; }
-.rep-val { font-size: 0.6rem; color: var(--ink-ghost); width: 28px; text-align: right; flex-shrink: 0; }
-.rb-fuqing { background: #2d5986; }
-.rb-tianli  { background: #8a5a1a; }
-.rb-cao     { background: #2a6040; }
-.rb-wudu    { background: #7a2a7a; }
-.rb-saren   { background: #4a4a7a; }
+/* Item / clue list */
+.item-list { display:flex; flex-direction:column; gap:0.28rem; }
+.item-tag { font-size:0.68rem; color:var(--text-dim); padding:0.2rem 0.55rem; border:1px solid var(--border); border-radius:0.4rem; background:rgba(26,21,16,0.5); font-weight:300; display:inline-block; }
+.clue-item { font-size:0.7rem; color:var(--text-dim); padding:0.3rem 0.6rem; border-left:1.5px solid rgba(192,57,43,0.35); line-height:1.75; font-weight:300; }
+.clue-item::before { content:'◆ '; font-size:0.4em; color:rgba(138,106,26,0.5); vertical-align:middle; }
 
-.history-section { border-top: 1px solid var(--border); padding-top: 0.9rem; }
-.history-label { font-size: 0.65rem; color: var(--ink-ghost); letter-spacing: 0.25em; margin-bottom: 0.45rem; font-weight: 300; }
-.history-item { font-size: 0.7rem; color: var(--ink-faint); padding: 0.32rem 0.6rem; border-left: 1.5px solid var(--border-mid); line-height: 1.8; margin-bottom: 0.28rem; font-weight: 300; }
-.history-item .hi-c { color: var(--accent-dim); font-size: 0.65em; display: block; margin-bottom: 1px; }
+/* Save buttons row */
+.save-row { display:flex; gap:0.45rem; justify-content:flex-end; }
+.save-btn { background:rgba(26,21,16,0.7); border:1px solid var(--border); border-radius:0.45rem; padding:0.28rem 0.78rem; font-family:var(--font-body); font-size:0.67rem; color:var(--text-ghost); letter-spacing:0.12em; cursor:pointer; transition:all var(--transition); }
+.save-btn:hover { border-color:var(--red-dim); color:var(--text-main); }
+.save-btn.green { color:#2a6040; border-color:rgba(42,96,64,0.2); background:rgba(42,96,64,0.05); }
+.save-btn.blue { color:var(--accent); border-color:rgba(58,107,138,0.2); background:rgba(58,107,138,0.05); }
 
-#screen-ending { position: fixed; inset: 0; z-index: 100; background: rgba(234,244,251,0.92); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; backdrop-filter: blur(16px); }
-.ending-title { font-family: var(--font-display); font-size: clamp(2rem,5vw,3.5rem); color: var(--ink); letter-spacing: 0.2em; margin-bottom: 1rem; }
-.ending-text { font-size: 0.95rem; color: var(--ink-light); max-width: 52ch; line-height: 2.3; margin-bottom: 2.5rem; font-weight: 300; }
-.restart-btn { background: var(--ink); border: none; border-radius: 0.65rem; padding: 0.75rem 2.5rem; color: #f4f9fd; font-family: var(--font-display); font-size: 1rem; letter-spacing: 0.22em; cursor: pointer; box-shadow: 0 4px 16px rgba(44,58,74,0.2); transition: all var(--transition); }
-.restart-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(44,58,74,0.28); }
+/* Loading / error */
+.loading-indicator { display:none; align-items:center; gap:0.75rem; color:var(--text-dim); font-size:0.78rem; padding:0.5rem 0.25rem; font-weight:300; }
+.loading-indicator.active { display:flex; }
+.loading-dots { display:flex; gap:4px; }
+.loading-dots span { width:5px; height:5px; border-radius:50%; background:var(--red-dim); animation:pdot 1.4s ease-in-out infinite; }
+.loading-dots span:nth-child(2){animation-delay:.2s;} .loading-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes pdot{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1.2)}}
+.error-banner { display:none; background:rgba(120,30,20,0.2); border:1px solid rgba(192,57,43,0.3); border-radius:0.6rem; padding:0.7rem 1rem; font-size:0.78rem; color:#e07060; line-height:1.75; }
+.error-banner.show { display:block; }
 
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+/* History */
+.history-section { border-top:1px solid var(--border); padding-top:0.85rem; }
+.history-label { font-size:0.62rem; color:var(--text-ghost); letter-spacing:0.25em; margin-bottom:0.4rem; font-weight:300; }
+.history-item { font-size:0.68rem; color:var(--text-ghost); padding:0.3rem 0.55rem; border-left:1.5px solid var(--border); line-height:1.8; margin-bottom:0.25rem; font-weight:300; }
+.history-item .hi-c { color:var(--red-dim); font-size:0.62em; display:block; margin-bottom:1px; }
 
-@media (max-width: 600px) {
-  .topbar { flex-direction: column; align-items: flex-start; }
-  .story-card { padding: 1.2rem; }
-  .intro-card { padding: 1.4rem; }
-}
+/* Ending */
+#screen-ending { position:fixed; inset:0; z-index:100; background:rgba(20,14,10,0.96); flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; backdrop-filter:blur(18px); }
+.ending-title { font-family:var(--font-display); font-size:clamp(2rem,5vw,3.5rem); color:var(--text-main); letter-spacing:0.2em; text-shadow:0 0 40px rgba(192,57,43,0.5); margin-bottom:1rem; }
+.ending-text { font-size:0.95rem; color:var(--text-dim); max-width:54ch; line-height:2.3; margin-bottom:2.5rem; font-weight:300; }
+.restart-btn { background:linear-gradient(135deg,var(--red-dim),var(--red)); border:none; border-radius:0.65rem; padding:0.75rem 2.5rem; color:var(--text-main); font-family:var(--font-display); font-size:1rem; letter-spacing:0.22em; cursor:pointer; box-shadow:0 4px 20px rgba(192,57,43,0.35); transition:all var(--transition); }
+.restart-btn:hover { transform:translateY(-2px); }
+
+@keyframes smoke-drift{0%{left:-80%;opacity:0}8%{opacity:1}90%{opacity:0.4}100%{left:110%;opacity:0}}
+::-webkit-scrollbar{width:3px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+@media(max-width:600px){ .topbar{flex-direction:column;align-items:flex-start;} .story-card{padding:1.2rem 1.25rem;} .intro-card{padding:1.4rem;} }
 </style>
 </head>
 <body>
-
 <div class="bg-wash"></div>
-
-<!-- Line-art clouds -->
-<div class="scene-layer">
-  <div class="cloud-group cg-1">
-    <svg width="220" height="60" viewBox="0 0 220 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10,45 Q30,15 60,22 Q70,5 100,12 Q115,2 138,10 Q160,4 178,18 Q200,14 210,30 Q218,38 205,42 Q190,50 160,46 Q140,52 110,48 Q85,55 60,49 Q35,54 20,48 Q8,52 10,45 Z" stroke="rgba(44,58,74,0.16)" stroke-width="1.2" fill="rgba(255,255,255,0.52)"/>
-      <path d="M40,45 Q55,35 75,38" stroke="rgba(44,58,74,0.09)" stroke-width="0.8" fill="none"/>
-      <path d="M120,46 Q145,38 165,42" stroke="rgba(44,58,74,0.07)" stroke-width="0.8" fill="none"/>
-    </svg>
-  </div>
-  <div class="cloud-group cg-2">
-    <svg width="140" height="38" viewBox="0 0 140 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8,28 Q20,8 42,14 Q52,2 72,8 Q90,2 108,12 Q124,8 132,20 Q138,26 128,30 Q115,36 90,32 Q68,38 45,33 Q22,37 12,32 Q4,35 8,28 Z" stroke="rgba(44,58,74,0.13)" stroke-width="1" fill="rgba(255,255,255,0.48)"/>
-    </svg>
-  </div>
-  <div class="cloud-group cg-3">
-    <svg width="260" height="50" viewBox="0 0 260 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5,35 Q25,12 55,18 Q65,5 95,10 Q115,0 148,8 Q168,2 195,12 Q220,6 240,20 Q255,26 248,34 Q238,42 215,38 Q195,44 168,40 Q145,46 120,42 Q95,48 70,43 Q45,48 25,42 Q10,45 5,35 Z" stroke="rgba(44,58,74,0.13)" stroke-width="1.1" fill="rgba(255,255,255,0.42)"/>
-      <path d="M50,38 Q80,28 110,32" stroke="rgba(44,58,74,0.07)" stroke-width="0.9" fill="none" stroke-dasharray="4 3"/>
-    </svg>
-  </div>
-  <div class="cloud-group cg-4">
-    <svg width="90" height="28" viewBox="0 0 90 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5,20 Q14,6 28,10 Q35,2 50,6 Q62,2 72,10 Q82,8 86,16 Q89,21 82,23 Q70,27 52,24 Q34,27 18,24 Q6,26 5,20 Z" stroke="rgba(44,58,74,0.12)" stroke-width="0.9" fill="rgba(255,255,255,0.42)"/>
-    </svg>
-  </div>
-  <div class="cloud-group cg-5">
-    <svg width="180" height="44" viewBox="0 0 180 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8,30 Q22,10 48,16 Q58,4 80,9 Q98,2 118,10 Q136,5 152,16 Q165,12 172,24 Q177,30 168,34 Q155,40 132,36 Q112,42 88,38 Q64,43 42,38 Q20,43 10,37 Q4,40 8,30 Z" stroke="rgba(44,58,74,0.14)" stroke-width="1.1" fill="rgba(255,255,255,0.48)"/>
-    </svg>
-  </div>
-  <div class="cloud-group cg-6">
-    <svg width="160" height="35" viewBox="0 0 160 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M5,24 Q18,8 38,13 Q48,3 65,8 Q80,2 98,8 Q114,3 130,12 Q145,8 152,20 Q157,26 148,28 Q136,33 115,29 Q95,34 72,30 Q50,34 30,29 Q13,32 5,24 Z" stroke="rgba(44,58,74,0.11)" stroke-width="0.9" fill="rgba(255,255,255,0.4)"/>
-    </svg>
-  </div>
+<div class="smoke-layer" style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+  <div style="position:absolute;top:18%;width:65%;height:1px;background:linear-gradient(90deg,transparent,rgba(180,100,60,0.07),transparent);animation:smoke-drift 22s linear infinite;opacity:0;"></div>
+  <div style="position:absolute;top:35%;width:80%;height:1px;background:linear-gradient(90deg,transparent,rgba(180,100,60,0.05),transparent);animation:smoke-drift 30s linear infinite;animation-delay:-10s;opacity:0;"></div>
+  <div style="position:absolute;top:62%;width:55%;height:1px;background:linear-gradient(90deg,transparent,rgba(180,100,60,0.06),transparent);animation:smoke-drift 18s linear infinite;animation-delay:-6s;opacity:0;"></div>
 </div>
-
-<!-- Mountain landscape -->
-<svg class="landscape-layer" viewBox="0 0 1440 220" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0,180 Q80,100 180,130 Q250,90 340,120 Q420,80 520,115 Q600,75 700,108 Q780,70 880,105 Q960,68 1060,100 Q1140,72 1240,105 Q1320,80 1440,115 L1440,220 L0,220 Z" fill="rgba(44,58,74,0.055)"/>
-  <path d="M0,200 Q60,148 140,162 Q200,135 280,155 Q360,128 450,150 Q530,132 620,155 Q700,128 800,152 Q880,130 970,155 Q1060,130 1160,158 Q1250,136 1360,158 L1440,165 L1440,220 L0,220 Z" fill="rgba(44,58,74,0.085)"/>
-  <path d="M0,210 Q100,188 200,200 Q280,185 380,198 Q480,184 580,197 Q680,183 780,197 Q880,183 980,198 Q1080,185 1200,200 Q1320,186 1440,200 L1440,220 L0,220 Z" fill="rgba(44,58,74,0.065)"/>
-  <line x1="0" y1="205" x2="1440" y2="205" stroke="rgba(44,58,74,0.055)" stroke-width="0.8" stroke-dasharray="8 6"/>
-  <line x1="0" y1="213" x2="1440" y2="213" stroke="rgba(44,58,74,0.035)" stroke-width="0.6" stroke-dasharray="12 8"/>
-  <g stroke="rgba(44,58,74,0.14)" stroke-width="1" fill="none">
-    <line x1="340" y1="120" x2="340" y2="140"/><path d="M331,134 Q340,118 349,134"/>
-    <line x1="358" y1="122" x2="358" y2="140"/><path d="M350,136 Q358,120 366,136"/>
-    <line x1="700" y1="108" x2="700" y2="128"/><path d="M691,122 Q700,106 709,122"/>
-    <line x1="718" y1="112" x2="718" y2="128"/><path d="M710,124 Q718,110 726,124"/>
-    <line x1="1060" y1="100" x2="1060" y2="120"/><path d="M1051,114 Q1060,98 1069,114"/>
+<div class="scene-layer">
+  <div class="cloud-group cg-1"><svg width="220" height="60" viewBox="0 0 220 60" fill="none"><path d="M10,45 Q30,15 60,22 Q70,5 100,12 Q115,2 138,10 Q160,4 178,18 Q200,14 210,30 Q218,38 205,42 Q190,50 160,46 Q140,52 110,48 Q85,55 60,49 Q35,54 20,48 Q8,52 10,45 Z" stroke="rgba(44,58,74,0.15)" stroke-width="1.2" fill="rgba(255,255,255,0.5)"/></svg></div>
+  <div class="cloud-group cg-2"><svg width="140" height="38" viewBox="0 0 140 38" fill="none"><path d="M8,28 Q20,8 42,14 Q52,2 72,8 Q90,2 108,12 Q124,8 132,20 Q138,26 128,30 Q115,36 90,32 Q68,38 45,33 Q22,37 12,32 Q4,35 8,28 Z" stroke="rgba(44,58,74,0.12)" stroke-width="1" fill="rgba(255,255,255,0.45)"/></svg></div>
+  <div class="cloud-group cg-3"><svg width="260" height="50" viewBox="0 0 260 50" fill="none"><path d="M5,35 Q25,12 55,18 Q65,5 95,10 Q115,0 148,8 Q168,2 195,12 Q220,6 240,20 Q255,26 248,34 Q238,42 215,38 Q195,44 168,40 Q145,46 120,42 Q95,48 70,43 Q45,48 25,42 Q10,45 5,35 Z" stroke="rgba(44,58,74,0.12)" stroke-width="1.1" fill="rgba(255,255,255,0.42)"/></svg></div>
+  <div class="cloud-group cg-4"><svg width="90" height="28" viewBox="0 0 90 28" fill="none"><path d="M5,20 Q14,6 28,10 Q35,2 50,6 Q62,2 72,10 Q82,8 86,16 Q89,21 82,23 Q70,27 52,24 Q34,27 18,24 Q6,26 5,20 Z" stroke="rgba(44,58,74,0.11)" stroke-width="0.9" fill="rgba(255,255,255,0.42)"/></svg></div>
+  <div class="cloud-group cg-5"><svg width="180" height="44" viewBox="0 0 180 44" fill="none"><path d="M8,30 Q22,10 48,16 Q58,4 80,9 Q98,2 118,10 Q136,5 152,16 Q165,12 172,24 Q177,30 168,34 Q155,40 132,36 Q112,42 88,38 Q64,43 42,38 Q20,43 10,37 Q4,40 8,30 Z" stroke="rgba(44,58,74,0.13)" stroke-width="1.1" fill="rgba(255,255,255,0.46)"/></svg></div>
+</div>
+<svg class="landscape-layer" viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,170 Q80,95 180,125 Q250,85 340,115 Q420,75 520,110 Q600,70 700,103 Q780,65 880,100 Q960,63 1060,95 Q1140,67 1240,100 Q1320,75 1440,110 L1440,200 L0,200 Z" fill="rgba(44,58,74,0.05)"/>
+  <path d="M0,188 Q60,145 140,158 Q200,132 280,150 Q360,125 450,146 Q530,128 620,150 Q700,124 800,148 Q880,126 970,150 Q1060,126 1160,153 Q1250,132 1360,153 L1440,160 L1440,200 L0,200 Z" fill="rgba(44,58,74,0.08)"/>
+  <line x1="0" y1="195" x2="1440" y2="195" stroke="rgba(44,58,74,0.05)" stroke-width="0.8" stroke-dasharray="8 6"/>
+  <g stroke="rgba(44,58,74,0.13)" stroke-width="1" fill="none">
+    <line x1="340" y1="115" x2="340" y2="133"/><path d="M332,128 Q340,113 348,128"/>
+    <line x1="700" y1="103" x2="700" y2="122"/><path d="M692,117 Q700,101 708,117"/>
+    <line x1="1060" y1="95" x2="1060" y2="114"/><path d="M1052,109 Q1060,93 1068,109"/>
   </g>
 </svg>
 
 <!-- ===== INTRO ===== -->
 <section class="screen active" id="screen-intro">
   <svg class="brush-deco" viewBox="0 0 200 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M10,15 Q50,5 100,15 Q150,25 190,12" stroke="rgba(44,58,74,0.28)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-    <path d="M30,18 Q70,10 100,18 Q130,26 165,16" stroke="rgba(44,58,74,0.11)" stroke-width="1" fill="none" stroke-linecap="round"/>
-    <rect x="182" y="8" width="14" height="14" rx="1" stroke="rgba(120,40,40,0.32)" stroke-width="1" fill="rgba(120,40,40,0.05)"/>
-    <text x="189" y="19" font-size="6" fill="rgba(120,40,40,0.48)" text-anchor="middle" font-family="serif">俠</text>
+    <path d="M10,15 Q50,5 100,15 Q150,25 190,12" stroke="rgba(44,58,74,0.26)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path d="M30,18 Q70,10 100,18 Q130,26 165,16" stroke="rgba(44,58,74,0.1)" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <rect x="182" y="8" width="14" height="14" rx="1" stroke="rgba(120,40,40,0.3)" stroke-width="1" fill="rgba(120,40,40,0.05)"/>
+    <text x="189" y="19" font-size="6" fill="rgba(120,40,40,0.45)" text-anchor="middle" font-family="serif">康</text>
   </svg>
-
-  <p class="intro-era">大樑末年 · 平行武俠世界</p>
-  <h1 class="intro-title">亂世江湖</h1>
-  <p class="intro-subtitle">火器時代的武林存亡之戰</p>
-  <span class="version-badge">測試版本 1</span>
+  <h1 class="intro-title">書劍</h1>
+  <p class="intro-subtitle">金氏皇朝 · 江湖暗潮 · 天下未定</p>
+  <span class="version-badge">測試版本 2</span>
   <div class="brush-line"></div>
-
-  <!-- Faction strip -->
-  <div class="faction-strip">
-    <span class="faction-tag ft-fuqing">⚙ 扶清會</span>
-    <span class="faction-tag ft-tianli">☯ 天理教</span>
-    <span class="faction-tag ft-cao">⚓ 漕幫</span>
-    <span class="faction-tag ft-wudu">☠ 五毒教</span>
-    <span class="faction-tag ft-saren">⚔ 散人聯盟</span>
-  </div>
 
   <div class="intro-card">
     <div>
@@ -427,35 +241,53 @@ details[open] summary::after { content: ' ▴'; }
       <input class="name-input" type="text" id="player-name" placeholder="請輸入你的名字" maxlength="8" autocomplete="off">
     </div>
     <div>
-      <span class="form-label">選擇出身</span>
-      <div class="origin-grid" id="origin-group">
-        <button class="origin-btn selected" data-origin="扶清會探子"><span class="icon">⚙️</span>扶清探子</button>
-        <button class="origin-btn" data-origin="天理教俗家弟子"><span class="icon">☯️</span>天理俗家</button>
-        <button class="origin-btn" data-origin="漕幫水手"><span class="icon">⚓</span>漕幫水手</button>
-        <button class="origin-btn" data-origin="五毒教棄徒"><span class="icon">☠️</span>五毒棄徒</button>
-        <button class="origin-btn" data-origin="散人俠客"><span class="icon">⚔️</span>散人俠客</button>
-        <button class="origin-btn" data-origin="街頭乞丐"><span class="icon">🪔</span>街頭乞丐</button>
+      <span class="form-label">選擇出身背景</span>
+      <!-- Page 1 -->
+      <div class="origin-page active" id="origin-page-1">
+        <button class="origin-btn" data-origin="滿洲貴族後裔"><span class="ob-icon">🏯</span><span class="ob-text">滿洲貴族後裔</span><span class="ob-hint"><span class="hint-label">初始好感</span><span class="hint-val">朝廷 +10</span></span></button>
+        <button class="origin-btn" data-origin="漢人書生世家"><span class="ob-icon">📚</span><span class="ob-text">漢人書生世家</span><span class="ob-hint"><span class="hint-label">初始好感</span><span class="hint-val">武林 +5</span></span></button>
+        <button class="origin-btn" data-origin="江湖孤兒"><span class="ob-icon">⚔️</span><span class="ob-text">江湖孤兒</span><span class="ob-hint"><span class="hint-label">初始好感</span><span class="hint-val">武林 +8</span></span></button>
+        <button class="origin-btn" data-origin="魔教遺孤"><span class="ob-icon">🔮</span><span class="ob-text">魔教遺孤</span><span class="ob-hint"><span class="hint-label">初始好感</span><span class="hint-val">血蓮宗 +10</span></span></button>
+        <button class="origin-btn" data-origin="海外歸來"><span class="ob-icon">⚓</span><span class="ob-text">海外歸來</span><span class="ob-hint"><span class="hint-label">初始好感</span><span class="hint-val neutral">各方中立</span></span></button>
+      </div>
+      <!-- Page 2 -->
+      <div class="origin-page" id="origin-page-2">
+        <button class="origin-btn" data-origin="明室遠親"><span class="ob-icon">🔴</span><span class="ob-text">明室遠親</span><span class="ob-hint"><span class="hint-label">初始好感</span><span class="hint-val">朱紅閣 +10</span></span></button>
+        <button class="origin-btn" data-origin="商人子弟"><span class="ob-icon">💰</span><span class="ob-text">商人子弟</span><span class="ob-hint"><span class="hint-label">初始加成</span><span class="hint-val attr">銀兩 +200</span></span></button>
+        <button class="origin-btn" data-origin="綠林草莽"><span class="ob-icon">🌿</span><span class="ob-text">綠林草莽</span><span class="ob-hint"><span class="hint-label">初始加成</span><span class="hint-val attr">體魄 +20</span></span></button>
+        <button class="origin-btn" data-origin="白山舊姓（北地貴裔）"><span class="ob-icon">🏔️</span><span class="ob-text">白山舊姓（北地貴裔）</span><span class="ob-hint"><span class="hint-label">初始好感</span><span class="hint-val">朝廷 +8</span></span></button>
+      </div>
+      <div class="page-nav" style="margin-top:0.5rem;">
+        <button class="page-nav-btn active-pg" id="pg1-btn" onclick="showOriginPage(1)">第一頁（1-5）</button>
+        <button class="page-nav-btn" id="pg2-btn" onclick="showOriginPage(2)">第二頁（6-9）</button>
       </div>
     </div>
-    <button class="start-btn" id="start-btn">踏入亂世</button>
+    <button class="start-btn" id="start-btn">踏入江湖</button>
     <div style="display:flex;gap:0.5rem;">
-  <button id="load-btn" onclick="loadGame()" style="display:none;flex:1;background:rgba(44,58,74,0.06);border:1px solid rgba(44,58,74,0.15);border-radius:0.7rem;padding:0.7rem;font-family:'Noto Serif SC',serif;font-size:0.85rem;color:#4a5e72;letter-spacing:0.2em;cursor:pointer;">讀取存檔</button>
-  <button id="del-btn" onclick="deleteSave()" style="display:none;background:rgba(120,40,40,0.06);border:1px solid rgba(120,40,40,0.15);border-radius:0.7rem;padding:0.7rem 1rem;font-family:'Noto Serif SC',serif;font-size:0.78rem;color:#7a3030;letter-spacing:0.1em;cursor:pointer;">刪除</button>
-</div>
+      <button id="load-btn" onclick="loadGame()" style="display:none;flex:1;background:rgba(44,58,74,0.06);border:1px solid rgba(44,58,74,0.15);border-radius:0.7rem;padding:0.65rem;font-family:'Noto Serif SC',serif;font-size:0.82rem;color:#4a5e72;letter-spacing:0.18em;cursor:pointer;">讀取存檔</button>
+      <button id="del-btn" onclick="deleteSave()" style="display:none;background:rgba(120,40,40,0.06);border:1px solid rgba(120,40,40,0.15);border-radius:0.7rem;padding:0.65rem 0.9rem;font-family:'Noto Serif SC',serif;font-size:0.75rem;color:#7a3030;letter-spacing:0.1em;cursor:pointer;">刪除</button>
+    </div>
+    <div style="display:flex;gap:0.5rem;">
+      <button id="export-btn" onclick="exportSave()" style="display:none;flex:1;background:rgba(42,96,64,0.05);border:1px solid rgba(42,96,64,0.18);border-radius:0.7rem;padding:0.55rem;font-family:'Noto Serif SC',serif;font-size:0.72rem;color:#2a6040;letter-spacing:0.14em;cursor:pointer;">📥 匯出存檔</button>
+      <label id="import-btn" style="display:inline-block;flex:1;background:rgba(58,107,138,0.05);border:1px solid rgba(58,107,138,0.18);border-radius:0.7rem;padding:0.55rem;font-family:'Noto Serif SC',serif;font-size:0.72rem;color:#3a6b8a;letter-spacing:0.14em;cursor:pointer;text-align:center;">
+        📤 匯入存檔<input type="file" accept=".json" onchange="importSave(event)" style="display:none;">
+      </label>
+    </div>
   </div>
 
   <details class="api-details">
     <summary>設定 AI（選填）</summary>
     <div class="api-inner">
       <select id="api-provider">
-        <option value="deepseek">DeepSeek（推薦·最便宜）</option>
+        <option value="deepseek">DeepSeek（推薦）</option>
         <option value="openai">OpenAI GPT-4o-mini</option>
       </select>
-      <input type="password" id="api-key-input" placeholder="貼上你的 API Key（sk-...）">
-      <p class="api-note">
-        如不輸入 Key 將使用示範模式。<br>
-        免費申請：<a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a>
-      </p>
+      <input type="password" id="api-key-input" placeholder="貼上你的 API Key">
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <label style="font-size:0.68rem;color:var(--text-ghost);letter-spacing:0.1em;white-space:nowrap;">🔵 先天真氣（預估回合）</label>
+        <input type="number" id="qi-input" min="1" max="99999" placeholder="例：459" style="flex:1;background:rgba(26,21,16,0.9);border:1px solid var(--border);border-radius:0.45rem;padding:0.42rem 0.7rem;font-family:var(--font-body);font-size:0.75rem;color:#8dd4f8;outline:none;width:100%;">
+      </div>
+      <p class="api-note">如不輸入 Key 將使用示範模式。填入預估回合數，每次 AI 回應自動倒數。<br>免費申請：<a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a></p>
     </div>
   </details>
 </section>
@@ -464,59 +296,90 @@ details[open] summary::after { content: ' ▴'; }
 <section class="screen" id="screen-game">
   <header class="topbar">
     <div class="topbar-left">
-      <span class="topbar-title" id="topbar-name">亂世江湖</span>
-      <span class="topbar-era">大樑末年 · 測試版本1</span>
+      <span class="topbar-title" id="topbar-name">清初俠影錄</span>
+      <span class="topbar-sub">康熙七年 · <span id="topbar-year">1668</span>年 · 第<span id="topbar-turn">1</span>回合 · 測試版本2</span>
     </div>
-    <div class="stats-row">
-      <div class="stat-chip hp"><span class="sl">氣血</span><span class="sv" id="stat-hp">100</span></div>
-      <div class="stat-chip mp"><span class="sl">內力</span><span class="sv" id="stat-mp">50</span></div>
-      <div class="stat-chip rank"><span class="sl">武功</span><span class="sv" id="stat-rank">初學</span></div>
-      <div class="stat-chip faction"><span class="sl">陣營</span><span class="sv" id="stat-faction">無</span></div>
+    <div class="stats-grid">
+      <div class="stat-chip hp"><span class="sl">⚡</span><span class="sv" id="stat-hp">100</span></div>
+      <div class="stat-chip gold"><span class="sl"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:1px"><circle cx="6.5" cy="6.5" r="5.5" stroke="#a8b8cc" stroke-width="1.2" fill="rgba(168,184,204,0.15)"/><circle cx="6.5" cy="6.5" r="3.5" stroke="#a8b8cc" stroke-width="0.7" fill="none"/><text x="6.5" y="10" font-size="5.5" fill="#c0d0e0" text-anchor="middle" font-family="serif">兩</text></svg></span><span class="sv" id="stat-silver">100</span></div>
+      <div class="stat-chip rank"><span class="sl">境</span><span class="sv" id="stat-rank">初學</span></div>
+      <div class="stat-chip"><span class="sl">名望</span><span class="sv" id="stat-fame">5</span></div>
+      <div class="stat-chip loc"><span class="sl">📍</span><span class="sv" id="stat-loc">北京</span></div>
+      <div class="stat-chip"><span class="sl">出身</span><span class="sv" id="stat-origin">-</span></div>
+      <div class="stat-chip qi" id="qi-chip" style="display:none;grid-column:1/-1;justify-self:end;">
+        <span class="sl" style="font-size:0.9em;">🔵</span>
+        <span style="font-size:0.72rem;color:#6ab4e8;letter-spacing:0.08em;margin:0 2px;">先天真氣</span>
+        <span class="sv" id="stat-qi" style="color:#8dd4f8;">∞</span>
+      </div>
     </div>
   </header>
 
   <main class="game-layout">
+    <!-- Save row -->
+    <div class="save-row">
+      <button class="save-btn" onclick="exportSave()">📥 匯出</button>
+      <button class="save-btn green" onclick="saveGame()">存檔</button>
+    </div>
+
+    <!-- Story -->
     <div class="story-card">
-      <span class="chapter-label" id="chapter-label">第一回</span>
+      <span class="chapter-label" id="chapter-label">第一回合 · 北京城西</span>
       <div id="story-text"></div>
       <span class="cursor" id="cursor" style="display:none"></span>
     </div>
-<!-- 存檔按鈕列 -->
-<div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-bottom:-0.5rem">
-  <button onclick="saveGame()" style="background:rgba(44,58,74,0.08);border:1px solid rgba(44,58,74,0.15);border-radius:0.5rem;padding:0.35rem 0.85rem;font-family:'Noto Serif SC',serif;font-size:0.7rem;color:#4a5e72;letter-spacing:0.15em;cursor:pointer;">存檔</button>
-</div>
+
     <div class="loading-indicator" id="loading">
       <div class="loading-dots"><span></span><span></span><span></span></div>
-      <span>說書人正在鋪陳亂世…</span>
+      <span>說書人正在鋪陳故事…</span>
     </div>
-
     <div class="error-banner" id="error-banner"></div>
 
-    <div class="choices-section" id="choices-section">
-      <span class="choices-label">你的選擇</span>
-      <button class="choice-btn" id="c1"><span class="choice-num">一</span><span class="choice-text"></span></button>
-      <button class="choice-btn" id="c2"><span class="choice-num">二</span><span class="choice-text"></span></button>
-      <button class="choice-btn" id="c3"><span class="choice-num">三</span><span class="choice-text"></span></button>
+    <!-- Choices (5 buttons) -->
+    <div class="choices-section">
+      <span class="choices-label">你的選擇（輸入數字 1–5）</span>
+      <button class="choice-btn" id="c1"><span class="choice-num">1</span><span class="choice-text"></span></button>
+      <button class="choice-btn" id="c2"><span class="choice-num">2</span><span class="choice-text"></span></button>
+      <button class="choice-btn" id="c3"><span class="choice-num">3</span><span class="choice-text"></span></button>
+      <button class="choice-btn" id="c4"><span class="choice-num">4</span><span class="choice-text"></span></button>
+      <button class="choice-btn" id="c5"><span class="choice-num">5</span><span class="choice-text"></span></button>
     </div>
 
-    <!-- Faction rep bars -->
-    <div class="rep-panel" id="rep-panel" style="display:none">
-      <div class="rep-title">各方勢力好感</div>
-      <div class="rep-list">
-        <div class="rep-row"><span class="rep-name">扶清會</span><div class="rep-bar-bg"><div class="rep-bar rb-fuqing" id="rb-fuqing" style="width:50%"></div></div><span class="rep-val" id="rv-fuqing">50</span></div>
-        <div class="rep-row"><span class="rep-name">天理教</span><div class="rep-bar-bg"><div class="rep-bar rb-tianli" id="rb-tianli" style="width:50%"></div></div><span class="rep-val" id="rv-tianli">50</span></div>
-        <div class="rep-row"><span class="rep-name">漕幫</span><div class="rep-bar-bg"><div class="rep-bar rb-cao" id="rb-cao" style="width:50%"></div></div><span class="rep-val" id="rv-cao">50</span></div>
-        <div class="rep-row"><span class="rep-name">五毒教</span><div class="rep-bar-bg"><div class="rep-bar rb-wudu" id="rb-wudu" style="width:50%"></div></div><span class="rep-val" id="rv-wudu">50</span></div>
-        <div class="rep-row"><span class="rep-name">散人</span><div class="rep-bar-bg"><div class="rep-bar rb-saren" id="rb-saren" style="width:50%"></div></div><span class="rep-val" id="rv-saren">50</span></div>
+    <!-- Status panels -->
+    <div class="panels-row" id="panels-row" style="display:none">
+      <!-- Faction rep -->
+      <div class="panel-card">
+        <div class="panel-title">各方勢力好感</div>
+        <div class="rep-row"><span class="rep-name">朝廷</span><div class="rep-bar-bg"><div class="rep-bar rb-chaoting" id="rb-chaoting" style="width:50%"></div></div><span class="rep-val" id="rv-chaoting">0</span></div>
+        <div class="rep-row"><span class="rep-name">三藩</span><div class="rep-bar-bg"><div class="rep-bar rb-sanfan" id="rb-sanfan" style="width:50%"></div></div><span class="rep-val" id="rv-sanfan">0</span></div>
+        <div class="rep-row"><span class="rep-name">武林</span><div class="rep-bar-bg"><div class="rep-bar rb-wulin" id="rb-wulin" style="width:50%"></div></div><span class="rep-val" id="rv-wulin">0</span></div>
+        <div class="rep-row"><span class="rep-name">血蓮宗</span><div class="rep-bar-bg"><div class="rep-bar rb-xuelian" id="rb-xuelian" style="width:50%"></div></div><span class="rep-val" id="rv-xuelian">0</span></div>
+        <div class="rep-row"><span class="rep-name">朱紅閣</span><div class="rep-bar-bg"><div class="rep-bar rb-zhuhong" id="rb-zhuhong" style="width:50%"></div></div><span class="rep-val" id="rv-zhuhong">0</span></div>
+      </div>
+      <!-- Attributes -->
+      <div class="panel-card">
+        <div class="panel-title">角色屬性</div>
+        <div class="attr-row"><span class="attr-name">體魄</span><div class="attr-bar-bg"><div class="attr-bar" id="ab-tizhi" style="width:10%"></div></div><span class="attr-val" id="av-tizhi">-</span></div>
+        <div class="attr-row"><span class="attr-name">內力</span><div class="attr-bar-bg"><div class="attr-bar" id="ab-neili" style="width:10%"></div></div><span class="attr-val" id="av-neili">-</span></div>
+        <div class="attr-row"><span class="attr-name">武藝</span><div class="attr-bar-bg"><div class="attr-bar" id="ab-wuyi" style="width:10%"></div></div><span class="attr-val" id="av-wuyi">-</span></div>
+        <div class="attr-row"><span class="attr-name">身法</span><div class="attr-bar-bg"><div class="attr-bar" id="ab-shenfa" style="width:10%"></div></div><span class="attr-val" id="av-shenfa">-</span></div>
+        <div class="attr-row"><span class="attr-name">智謀</span><div class="attr-bar-bg"><div class="attr-bar" id="ab-zhimou" style="width:10%"></div></div><span class="attr-val" id="av-zhimou">-</span></div>
+        <div class="attr-row"><span class="attr-name">魅力</span><div class="attr-bar-bg"><div class="attr-bar" id="ab-meili" style="width:10%"></div></div><span class="attr-val" id="av-meili">-</span></div>
       </div>
     </div>
 
-    <!-- Clue panel -->
-    <div class="clue-panel" id="clue-panel">
-      <div class="clue-title">已知因果碎片</div>
-      <div class="clue-list" id="clue-list"></div>
+    <!-- Items -->
+    <div class="panel-card" id="items-panel" style="display:none">
+      <div class="panel-title">隨身物品</div>
+      <div class="item-list" id="item-list"></div>
     </div>
 
+    <!-- Clues -->
+    <div class="panel-card" id="clues-panel" style="display:none">
+      <div class="panel-title">已知線索</div>
+      <div id="clues-list"></div>
+    </div>
+
+    <!-- History -->
     <div class="history-section" id="history-section" style="display:none">
       <div class="history-label">俠客日誌</div>
       <div id="history-list"></div>
@@ -526,89 +389,177 @@ details[open] summary::after { content: ' ▴'; }
 
 <!-- ===== ENDING ===== -->
 <section class="screen" id="screen-ending">
-  <svg style="width:120px;margin-bottom:1.5rem;opacity:0.3" viewBox="0 0 120 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5,15 Q30,5 60,15 Q90,25 115,12" stroke="rgba(44,58,74,0.6)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  </svg>
-  <div class="ending-title" id="ending-title">故事終結</div>
+  <div class="ending-title" id="ending-title">江湖落幕</div>
   <p class="ending-text" id="ending-text"></p>
-  <button class="restart-btn" id="restart-btn">重新入亂世</button>
+  <button class="restart-btn" id="restart-btn">重入江湖</button>
 </section>
 
 <script>
-// ====== WORLD BIBLE ======
-const WORLD = {
-  era: '大樑末年，鴉片戰爭後三十年',
-  factions: {
-    fuqing:  { name:'扶清會',  desc:'工業集權進步，但內藏臥底' },
-    tianli:  { name:'天理教',  desc:'傳統武學神秘，資金來自走私鴉片' },
-    cao:     { name:'漕幫',    desc:'控制水路，只想發財，誰贏幫誰' },
-    wudu:    { name:'五毒教',  desc:'毒藥霸主，教主被朝廷軟禁' },
-    saren:   { name:'散人聯盟',desc:'不選邊站，各有秘密的獨行俠' }
-  },
-  clues: [
-    { id:'c1', text:'天理教聖女與扶清會將軍曾是戀人', found: false },
-    { id:'c2', text:'漕幫鐵冊記錄了所有勢力的運毒路線', found: false },
-    { id:'c3', text:'五毒教深處囚禁著一隻會說話的三足蟾蜍', found: false },
-    { id:'c4', text:'最強火器「雷火銃」的設計圖藏在一首童謠裡', found: false },
-    { id:'c5', text:'開局救下的乞丐，其實是江湖百曉生的易容', found: false }
-  ]
+// ======== WORLD DATA ========
+const ORIGINS = {
+  '滿洲貴族後裔': { favor:{chaoting:10,sanfan:-5,wulin:-2,xuelian:-3,zhuhong:-10}, attrs:{tizhi:15,neili:10,wuyi:15,shenfa:10,zhimou:10,meili:15,fame:5}, silver:100, items:['黃馬褂（免一次被捕）','白銀100兩'] },
+  '漢人書生世家': { favor:{chaoting:-3,sanfan:2,wulin:5,xuelian:-4,zhuhong:6}, attrs:{tizhi:10,neili:10,wuyi:10,shenfa:10,zhimou:20,meili:15,fame:5}, silver:50, items:['四書五經手抄本','墨硯（可賣5兩）'] },
+  '江湖孤兒':     { favor:{chaoting:-2,sanfan:0,wulin:8,xuelian:-6,zhuhong:2}, attrs:{tizhi:15,neili:10,wuyi:20,shenfa:15,zhimou:5,meili:5,fame:5}, silver:20, items:['舊門派腰牌','補氣丹×3'] },
+  '魔教遺孤':     { favor:{chaoting:-5,sanfan:-2,wulin:-8,xuelian:10,zhuhong:-3}, attrs:{tizhi:15,neili:15,wuyi:15,shenfa:10,zhimou:10,meili:5,fame:5}, silver:20, items:['血蓮殘片','基礎毒藥配方'] },
+  '海外歸來':     { favor:{chaoting:0,sanfan:0,wulin:0,xuelian:0,zhuhong:0}, attrs:{tizhi:10,neili:10,wuyi:10,shenfa:10,zhimou:10,meili:10,fame:10}, silver:50, items:['異國兵器','航海日誌'] },
+  '明室遠親':     { favor:{chaoting:-10,sanfan:6,wulin:2,xuelian:-2,zhuhong:10}, attrs:{tizhi:10,neili:10,wuyi:10,shenfa:10,zhimou:15,meili:15,fame:10}, silver:50, items:['太祖高皇帝玉牌','家傳劍譜'] },
+  '商人子弟':     { favor:{chaoting:2,sanfan:4,wulin:-1,xuelian:-1,zhuhong:-2}, attrs:{tizhi:10,neili:5,wuyi:10,shenfa:10,zhimou:15,meili:20,fame:5}, silver:200, items:['通關文牒','白銀200兩'] },
+  '綠林草莽':     { favor:{chaoting:-8,sanfan:3,wulin:3,xuelian:-3,zhuhong:5}, attrs:{tizhi:20,neili:5,wuyi:15,shenfa:15,zhimou:5,meili:5,fame:5}, silver:30, items:['夜行衣','迷魂香×2'] },
+  '白山舊姓（北地貴裔）': { favor:{chaoting:8,sanfan:-2,wulin:-4,xuelian:-2,zhuhong:-10}, attrs:{tizhi:15,neili:10,wuyi:15,shenfa:12,zhimou:8,meili:10,fame:10}, silver:80, items:['金氏腰牌（免費驛站3次）','白銀80兩','祖傳角弓（1d6遠程）'] }
 };
 
-let playerName='', playerOrigin='散人俠客', apiKey='', apiProvider='deepseek';
-let conversationHistory=[], chapterNum=1;
-let playerStats={ hp:100, mp:50, rank:'初學', faction:'無' };
-let factionRep={ fuqing:50, tianli:50, cao:50, wudu:50, saren:50 };
-let foundClues=[], isTyping=false, historyLog=[], demoIndex=0;
+const RANK_THRESHOLDS = [
+  [0,'初學乍練'],[20,'三流'],[40,'二流'],[60,'一流'],[80,'爐火純青'],
+  [100,'登峰造極'],[120,'宗師'],[150,'超凡入聖'],[180,'化境'],[220,'玄境']
+];
+function getRank(v){ let r='初學乍練'; for(const[t,n] of RANK_THRESHOLDS){ if(v>=t)r=n; else break; } return r; }
 
-// ====== SYSTEM PROMPT ======
-function buildSystemPrompt(){
-  const repStr = Object.entries(factionRep).map(([k,v])=>`${WORLD.factions[k].name}好感${v}`).join('，');
-  const clueStr = foundClues.length ? foundClues.join('；') : '尚無';
-  return `你是大樑末年武俠世界的說書人。以下是世界設定，必須嚴格遵守：
+const SYSTEM_PROMPT_BASE = `你是一個即時AI文字武俠遊戲引擎，遊戲名稱為《書劍》。你的任務是根據以下所有設定，動態生成遊戲內容。玩家全程只需輸入數字（1-5）進行選擇，無需輸入文字。你必須維護所有數值、觸發事件、推進回合。
 
-【時代背景】${WORLD.era}。火器出現三十年，傳統武功地位動搖，江湖與朝廷的衝突進入新階段。
+## 一、核心設定
 
-【五大勢力】
-• 扶清會：工業、集權、進步，但組織內藏有其他勢力臥底，身份未知。
-• 天理教：傳統、個人修為、神秘，欲復興上古武學對抗火器，但資金來自走私鴉片。
-• 漕幫：控制水路經濟，中立，誰贏幫誰，重視利益。
-• 五毒教：掌握毒藥與解毒的絕對權力，但教主被朝廷秘密軟禁。
-• 散人聯盟：不選邊站的獨行俠群體，各有各的隱秘過去。
-• 朝廷：在暗中挑撥各方，不希望任何一方獨大。
+**時代**：清初（康熙年間）。所有真實歷史人物已替換為「一眼假名」。皇族姓「金」，皇帝名「熙」，年號仍稱康熙。滿洲舊族稱為「金朝舊族」或「北地貴裔」。當前年份：1668年（遊戲開始）。
 
-【因果碎片（可在故事中暗示，但勿直接揭露）】
-• 天理教聖女和扶清會將軍曾是戀人
-• 漕幫鐵冊記錄所有勢力運毒路線
-• 五毒教深處囚禁一隻會說話的三足蟾蜍
-• 最強火器「雷火銃」設計圖藏在一首童謠裡
-• 開局救下的乞丐，其實是江湖百曉生的易容
+**四大勢力**：
+• 朝廷：領袖金熙皇帝，內分「敖白黨」（保守）與「皇權黨」（改革）。
+• 三藩：吳三貴、耿精明、尚可福，割據南方，各懷鬼胎。
+• 武林：少林、武當、華山、峨眉，表面中立。魔教「血蓮宗」實為守護上古封印「修羅界裂縫」的被誤解者，獻祭為自願犧牲，非邪惡。
+• 朱紅閣：反清復明組織，內分「復明派」與「共和派」。軍師陳靖南，台灣鄭國成。
 
-【玩家資訊】
-• 名字：${playerName}，出身：${playerOrigin}
-• 氣血：${playerStats.hp}，內力：${playerStats.mp}，武功境界：${playerStats.rank}，目前陣營：${playerStats.faction}
-• 各方好感：${repStr}
-• 已知因果碎片：${clueStr}
+**滿漢地位影響**：
+- 白山舊姓、滿洲貴族後裔：朝廷控制區行動+2環境加值；朱紅閣控制區-4。
+- 明室遠親、漢人書生世家：朝廷控制區-2；朱紅閣控制區+2。
 
-【輸出規則】必須輸出合法JSON，禁止JSON以外任何文字：
+## 二、屬性系統
+
+**六大屬性（0~200+）**：體魄、內力、武藝、身法、智謀、魅力、名望（-100~100）
+**調整值**：floor((屬性值-10)/2)
+**生命值** = 體魄×2+20；**內力值** = 內力×2+20
+
+**武藝稱號**：初學乍練(0-19)、三流(20-39)、二流(40-59)、一流(60-79)、爐火純青(80-99)、登峰造極(100-119)、宗師(120-149)、超凡入聖(150-179)、化境(180-219)、玄境(220+)
+
+**成長方式**：修煉消耗5-10回合，武藝/內力/身法+1~3；學習武功消耗秘籍+5回合，武藝+5；宗師後晉升需完成突破任務。
+
+## 三、名望與官兵
+
+**名望效果**：說服加值=floor(名望/10)（±10上限）。名望≥80：交易×0.7；名望≤-60：黑市×2。
+**官兵遭遇**（名望<0時）：朝廷控制區移動擲d20，≤ceil(|名望|/10)+1則遭遇。可選行賄、戰鬥、逃跑。被捕坐牢=max(5,floor(|名望|/2))回合，罰款=max(20,|名望|×2)兩。
+**前30回合**：逮捕機制暫停。
+
+## 四、D&D判定
+
+擲d20+調整值≥DC則成功。調整值=屬性調整值+裝備加值+名望/好感加值+環境加值。
+普通DC10-15，困難20-25，史詩30-35。
+**戰鬥**：先攻d20+身法；命中d20+武藝+武器≥目標AC(10+身法調整+防具)；傷害=武器骰+floor(武藝調整/2)。
+
+## 五、勢力系統
+
+好感-100~100：血仇(-100~-50)見面攻擊、敵視(-49~-16)交易×1.8、懷疑(-15~-1)×1.3、中立(0~29)×1.0、友好(30~79)×0.8、崇拜(80~100)自動成功。
+初始Unity：朱紅閣85，武林70，血蓮宗55，朝廷45，三藩35。
+
+## 六、移動地圖
+
+**始終開放**：北京、揚州、杭州、廣州、武林聖地（少林、武當）
+**出身解鎖**：滿洲貴族/白山舊姓→盛京；魔教遺孤→血蓮宗秘境；明室遠親→台灣
+**後續解鎖**：盛京(朝廷≥20或擒敖白)、台灣(澎湖前置)、雅克薩(邊境傳聞+朝廷≥10)、長白山(薩滿神杖線索)、雲南(三藩之亂)、崑崙秘境(山崩事件)
+
+**移動方式**：徒步100里/回合免費每100里體力-10；騎馬200里/回合；驛站400里/回合每100里2兩；海路150里/回合5兩/100里
+**常用距離**：北京→揚州1500里，北京→盛京800里，揚州→杭州400里
+
+**子地點**：每個主要地點2~5個子地點（如北京：皇城、市集、鏢局、城西破廟、某大臣府邸）。
+
+## 七、回合時間節奏
+
+**前60回合慢節奏（重要）**：
+- 前60回合禁止觸發歷史事件主線倒計時
+- 前20回合優先非戰鬥選項（認識環境、NPC閒聊、學習基礎武功）
+- 戰鬥事件觸發機率減半（每400里才擲一次骰）
+- 前30回合不因名望<0被官兵盤查
+- 每10回合觸發「江湖時事」；每50回合檢查歷史事件
+
+## 八、歷史事件
+
+| 事件 | 觸發時間 | 難度 | 獎勵 |
+|------|---------|------|------|
+| 擒敖白 | 1669年 | 困難 | 《滿洲古武密卷》 |
+| 三藩之亂 | 1673年 | 極難 | 關寧鐵騎令 |
+| 澎湖海戰 | 1683年 | 困難 | 鄭氏水戰心得 |
+| 雅克薩之圍 | 1685年 | 困難 | 哥薩克火槍圖紙 |
+| 尼布楚談判 | 1689年 | 中等 | 外交豁免權 |
+| 連珠火銃爭奪 | 1680s | 極難 | 連珠火銃圖紙 |
+
+## 九、傳聞系統
+
+玩家在酒館可「打聽消息」抽取傳聞，可解鎖新地點/任務。示例：血蓮宗秘境「西南大山有紅光沖天…」；長白山「盛京舊宮有《長白山圖志》…」
+
+## 十、遊戲開場
+
+玩家啟動時先輸出開場白等待選擇出身（1-9），選擇後輸出對應專屬開場文本，自動記錄起始好感、屬性、物品及起始地點。開場後直接給出5個子地點選項及狀態欄。
+
+**各出身起始地點**：
+1.滿洲貴族後裔→北京（豪華宅邸）
+2.漢人書生世家→揚州（文墨軒）
+3.江湖孤兒→隨機武林門派所在地
+4.魔教遺孤→雲南（紅蓮村）
+5.海外歸來→廣州（珠江碼頭）
+6.明室遠親→台灣（安平古堡）
+7.商人子弟→杭州（聚寶齋）
+8.綠林草莽→山東（黑風寨廢墟）
+9.白山舊姓→盛京（八旗演武場）
+
+## 十一、輸出格式規範
+
+必須輸出合法JSON，禁止JSON以外文字：
 {
-  "story": "故事正文（130-200字，白話古典混合，融入火器時代氛圍，末尾留懸念）",
-  "choices": ["選項一（20字內）","選項二（20字內）","選項三（20字內）"],
-  "stats": { "hp": 數字, "mp": 數字, "rank": "初學/入門/江湖好手/一流高手/絕世宗師", "faction": "無/扶清會/天理教/漕幫/五毒教/散人聯盟" },
-  "rep_delta": { "fuqing": 數字-10到10, "tianli": 數字-10到10, "cao": 數字-10到10, "wudu": 數字-10到10, "saren": 數字-10到10 },
-  "clue_found": "c1或c2或c3或c4或c5或null（若本回合暗示了某條因果碎片）",
+  "story": "場景描述（100-200字，古典白話，末尾留懸念或引導）",
+  "choices": ["選項一","選項二","選項三","選項四","選項五"],
+  "stats": {
+    "hp": 數字,
+    "silver": 數字,
+    "fame": 數字,
+    "location": "位置",
+    "turn": 數字,
+    "year": 數字,
+    "attrs": { "tizhi": 數字, "neili": 數字, "wuyi": 數字, "shenfa": 數字, "zhimou": 數字, "meili": 數字 }
+  },
+  "favor_delta": { "chaoting": 數字(-10到10), "sanfan": 數字, "wulin": 數字, "xuelian": 數字, "zhuhong": 數字 },
+  "items_add": ["新物品（若有）"],
+  "items_remove": ["移除物品（若有）"],
+  "clue": "線索文字（若本回合發現線索，否則null）",
   "ending": false
-}
-若到達重大結局將ending設true。選項必須對各方勢力有不同傾向。`;
+}`
+
+// ======== QI STATE ========
+let qiRemaining = 0;
+
+function updateQiDisplay(){
+  if(qiRemaining > 0){
+    const el = document.getElementById('stat-qi');
+    el.textContent = qiRemaining;
+    el.style.color = qiRemaining <= 10 ? '#e04030' : qiRemaining <= 50 ? '#e09030' : '#8dd4f8';
+    document.getElementById('qi-chip').style.display = 'flex';
+    if(qiRemaining === 10) showToast('⚠️ 先天真氣僅餘10回合！');
+    if(qiRemaining === 0){ showToast('☠️ 先天真氣耗盡！'); document.getElementById('qi-chip').style.display = 'none'; }
+  } else {
+    document.getElementById('qi-chip').style.display = 'none';
+  }
 }
 
-// ====== DEMO SCENES ======
+// ======== STATE ========
+let playerName='', playerOrigin='', apiKey='', apiProvider='deepseek';
+let conversationHistory=[], turnNum=1, gameYear=1668;
+let playerStats={ hp:100, silver:100, wuyi:10, fame:5, location:'北京城西', year:1668, turn:1 };
+let playerAttrs={ tizhi:10, neili:10, wuyi:10, shenfa:10, zhimou:10, meili:10 };
+let factionFavor={ chaoting:0, sanfan:0, wulin:0, xuelian:0, zhuhong:0 };
+let playerItems=[], clues=[], historyLog=[], isTyping=false, demoIndex=0;
+
 const DEMO=[
-  {story:`大樑末年，硝煙未散。\n\n廣州碼頭的晨霧裡，夾雜著海水與火藥的氣味。${'{name}'}，你剛踏上這座城市，便聽見碼頭工人壓低聲音竊竊私語——昨夜漕幫的一艘貨船在珠江被燒，扶清會的藍旗艦隊就在對岸靜靜停泊，炮管黑洞洞地指著天空。\n\n正當你穿行於人群之間，忽然一個衣衫襤褸的老乞丐跌跌撞撞地撞進你懷裡，同時遠處傳來一聲震耳的火槍聲……`, choices:['扶起乞丐，拉他躲入巷中','就地臥倒，觀察槍聲方向','趁亂跟隨人群撤向城牆']},
-  {story:`你扶起乞丐，他的眼神比普通乞丐清醒得多，嘴角甚至帶著幾分若有若無的笑意。\n\n「多謝俠士。」他的聲音沙啞，卻咬字清晰，「碼頭這場火，是天理教放的，但嫁禍給五毒教的毒煙彈……真正的主謀，在漕幫的貨倉裡。」\n\n他說完，從袖中掏出一塊破布，上面用炭筆潦草畫著一隻三足蟾蜍，遞給你後，轉身消失在霧中。槍聲越來越近……`, choices:['追上乞丐，問清他的身份','帶著破布前往漕幫貨倉','把此事報告給扶清會']},
-  {story:`漕幫的貨倉深處，燈光昏黃。\n\n你剛踏進門，便被三把刀架住脖子——漕幫的弟兄嗅到了外人的氣息。領頭的漕幫二當家，人稱「鐵算盤」的謝老爺，眯著眼看了你許久。\n\n「你是哪邊的人？」他的語氣不冷不熱，「扶清會給了你多少？還是天理教的老和尚派你來的？」\n\n倉庫一角，隱約傳來某種低沉的、不像人聲的哼鳴聲……`, choices:['坦白自己只是散人，無意得罪漕幫','謊稱自己是朝廷密探，以勢壓人','趁其不備，奪刀反制']}
+  {story:`康熙七年，北京城西。\n\n寒風捲著黃葉掠過客棧簷角，你從夢中醒來，窗外已是黃昏。\n\n樓下喧嘩聲驟起——幾名身著官服的差役正押著一個老者，老者的長袍上繡著血蓮紋樣，神情倉皇卻不失從容。街道兩旁的行人紛紛側目，卻無一人敢上前。\n\n腰間的盤纏只剩最後幾錢，而這座城市的暗流，已在你腳下悄然流動……`,choices:['出手阻攔差役，救下老者','暗中跟隨，查明老者身份','前往附近酒館打聽消息','去城西鏢局尋找差事','悄悄離開，出城而去']},
+  {story:`你走進飄著酒香的酒館，找了個角落坐下。\n\n鄰桌兩名江湖人壓低聲音交談，你隱約聽見「連珠火銃」四字，其中一人道：「聽說圖紙就藏在山海關外老龍頭的石壁之中，只是那地方朝廷把守嚴密……」\n\n酒館掌櫃端來一碗熱粥，瞅了你一眼，湊近低聲道：「客官，看您面生。最近城裡不太平，三藩那邊又有消息傳來……」\n\n你如何應對？`,choices:['向掌櫃追問三藩的消息','起身接近鄰桌，打聽火銃圖紙','點酒靜觀，收集更多情報','付錢離開，前往城西破廟','詢問去盛京的路線']},
+  {story:`你跟蹤老者至一處廢棄的四合院。月色下，老者轉身直視你，眼神深邃如潭。\n\n「跟了半條街，總算肯現身了。」他的聲音沙啞而平靜，「血蓮宗的事，你最好不要摻和。不過……」他略一停頓，從袖中取出一枚赤紅的令牌，「你救了我，我欠你一個人情。這令牌，日後或許用得上。」\n\n遠處傳來巡邏兵的腳步聲，老者已悄然消失在夜色之中。`,choices:['收下令牌，快速離開','追上老者，要求他解釋','把令牌交給官府，換取賞銀','在此地搜查，尋找更多線索','返回客棧，暗中研究令牌']}
 ];
 
-// ====== DOM ======
+// ======== DOM ========
 const screenIntro=document.getElementById('screen-intro');
 const screenGame=document.getElementById('screen-game');
 const screenEnding=document.getElementById('screen-ending');
@@ -619,111 +570,165 @@ const loadingEl=document.getElementById('loading');
 const errorBanner=document.getElementById('error-banner');
 const historySection=document.getElementById('history-section');
 const historyList=document.getElementById('history-list');
-const repPanel=document.getElementById('rep-panel');
-const cluePanel=document.getElementById('clue-panel');
-const clueList=document.getElementById('clue-list');
-const choiceBtns=[document.getElementById('c1'),document.getElementById('c2'),document.getElementById('c3')];
+const panelsRow=document.getElementById('panels-row');
+const itemsPanel=document.getElementById('items-panel');
+const cluesPanel=document.getElementById('clues-panel');
+const choiceBtns=[1,2,3,4,5].map(i=>document.getElementById('c'+i));
 
-document.getElementById('origin-group').addEventListener('click',e=>{
-  const btn=e.target.closest('.origin-btn');if(!btn)return;
-  document.querySelectorAll('.origin-btn').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');playerOrigin=btn.dataset.origin;
+// Origin page
+function showOriginPage(n){
+  document.getElementById('origin-page-1').classList.toggle('active',n===1);
+  document.getElementById('origin-page-2').classList.toggle('active',n===2);
+  document.getElementById('pg1-btn').classList.toggle('active-pg',n===1);
+  document.getElementById('pg2-btn').classList.toggle('active-pg',n===2);
+}
+
+document.querySelectorAll('.origin-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.origin-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    playerOrigin=btn.dataset.origin;
+  });
 });
+
 document.getElementById('start-btn').addEventListener('click',startGame);
-updateSaveBtn();
 document.getElementById('restart-btn').addEventListener('click',()=>location.reload());
 document.getElementById('player-name').addEventListener('keydown',e=>{if(e.key==='Enter')startGame();});
 
 function startGame(){
+  if(!playerOrigin){ showToast('請先選擇出身背景'); return; }
   playerName=document.getElementById('player-name').value.trim()||'無名俠客';
   apiKey=document.getElementById('api-key-input').value.trim();
   apiProvider=document.getElementById('api-provider').value;
+
+  // Apply origin
+  const o=ORIGINS[playerOrigin];
+  Object.entries(o.favor).forEach(([k,v])=>{ if(factionFavor[k]!==undefined) factionFavor[k]+=(v||0); });
+  playerAttrs={...playerAttrs,...o.attrs};
+  playerStats.silver=o.silver;
+  playerStats.fame=o.attrs.fame||5;
+  playerItems=[...o.items];
+
   screenIntro.classList.remove('active');
   screenGame.classList.add('active');
-  document.getElementById('topbar-name').textContent=playerName+' · 亂世江湖';
-  updateStats();generateStory(null);
+  document.getElementById('topbar-name').textContent=playerName+' · 書劍';
+  document.getElementById('stat-origin').textContent=playerOrigin.slice(0,4);
+  updateStats(); updateFavors(); updateAttrs(); updateItems();
+  panelsRow.style.display='grid';
+  const qiVal=parseInt(document.getElementById('qi-input').value);
+  if(!isNaN(qiVal)&&qiVal>0){qiRemaining=qiVal;updateQiDisplay();}
+  generateStory(null);
 }
 
+// ======== UI UPDATES ========
 function updateStats(){
   document.getElementById('stat-hp').textContent=playerStats.hp;
-  document.getElementById('stat-mp').textContent=playerStats.mp;
-  document.getElementById('stat-rank').textContent=playerStats.rank;
-  document.getElementById('stat-faction').textContent=playerStats.faction;
+  document.getElementById('stat-silver').textContent=playerStats.silver;
+  document.getElementById('stat-rank').textContent=getRank(playerAttrs.wuyi||0);
+  document.getElementById('stat-fame').textContent=playerStats.fame;
+  document.getElementById('stat-loc').textContent=(playerStats.location||'北京').slice(0,4);
+  document.getElementById('topbar-year').textContent=playerStats.year||1668;
+  document.getElementById('topbar-turn').textContent=playerStats.turn||turnNum;
+  chapterLabel.textContent=`第${playerStats.turn||turnNum}回合 · ${playerStats.location||'北京'}`;
 }
 
-function updateRepBars(){
-  repPanel.style.display='block';
-  Object.entries(factionRep).forEach(([k,v])=>{
-    const bar=document.getElementById('rb-'+k);
-    const val=document.getElementById('rv-'+k);
-    if(bar){ bar.style.width=Math.max(2,Math.min(100,v))+'%'; }
+function updateFavors(){
+  panelsRow.style.display='grid';
+  Object.entries(factionFavor).forEach(([k,v])=>{
+    const bar=document.getElementById('rb-'+k); const val=document.getElementById('rv-'+k);
+    if(bar){ const pct=Math.max(0,Math.min(100,(v+100)/2)); bar.style.width=pct+'%'; }
     if(val){ val.textContent=v; }
   });
 }
 
-function showClue(clueId){
-  const clue=WORLD.clues.find(c=>c.id===clueId);
-  if(!clue||clue.found)return;
-  clue.found=true;
-  foundClues.push(clue.text);
-  cluePanel.classList.add('show');
-  const item=document.createElement('div');
-  item.className='clue-item';
-  item.textContent=clue.text;
-  clueList.appendChild(item);
-}
-
-async function typewriter(text,speed=40){
-  storyText.textContent='';cursorEl.style.display='inline-block';isTyping=true;
-  for(const c of text){storyText.textContent+=c;await new Promise(r=>setTimeout(r,speed));}
-  cursorEl.style.display='none';isTyping=false;
-}
-
-function showChoices(choices,delay=0){
-  choiceBtns.forEach((btn,i)=>{
-    btn.classList.remove('visible');btn.disabled=true;
-    const t=choices[i]||'';
-    btn.querySelector('.choice-text').textContent=t;
-    btn.style.display=t?'flex':'none';
-    if(t)setTimeout(()=>{btn.classList.add('visible');btn.disabled=false;},delay+i*140);
+function updateAttrs(){
+  const keys=['tizhi','neili','wuyi','shenfa','zhimou','meili'];
+  keys.forEach(k=>{
+    const v=playerAttrs[k]||10;
+    const bar=document.getElementById('ab-'+k); const val=document.getElementById('av-'+k);
+    if(bar){ bar.style.width=Math.min(100,v/2)+'%'; }
+    if(val){ val.textContent=v; }
   });
 }
-function disableChoices(){choiceBtns.forEach(b=>{b.disabled=true;});}
+
+function updateItems(){
+  if(playerItems.length===0){ itemsPanel.style.display='none'; return; }
+  itemsPanel.style.display='block';
+  document.getElementById('item-list').innerHTML=playerItems.map(i=>`<span class="item-tag">${i}</span>`).join(' ');
+}
+
+function addClue(text){
+  if(!text||clues.includes(text))return;
+  clues.push(text);
+  cluesPanel.style.display='block';
+  const el=document.createElement('div'); el.className='clue-item'; el.textContent=text;
+  document.getElementById('clues-list').appendChild(el);
+}
 
 function addToHistory(choice,summary){
   if(!choice)return;
   historyLog.unshift({choice,summary});
-  if(historyLog.length>5)historyLog.pop();
+  if(historyLog.length>6)historyLog.pop();
   historySection.style.display='block';
   historyList.innerHTML=historyLog.map(h=>`<div class="history-item"><span class="hi-c">▸ ${h.choice}</span>${h.summary}</div>`).join('');
 }
 
+// ======== TYPEWRITER ========
+async function typewriter(text,speed=38){
+  storyText.textContent=''; cursorEl.style.display='inline-block'; isTyping=true;
+  for(const c of text){ storyText.textContent+=c; await new Promise(r=>setTimeout(r,speed)); }
+  cursorEl.style.display='none'; isTyping=false;
+}
+
+function showChoices(choices,delay=0){
+  choiceBtns.forEach((btn,i)=>{
+    btn.classList.remove('visible'); btn.disabled=true;
+    const t=choices[i]||'';
+    btn.querySelector('.choice-text').textContent=t;
+    btn.style.display=t?'flex':'none';
+    if(t)setTimeout(()=>{ btn.classList.add('visible'); btn.disabled=false; },delay+i*130);
+  });
+}
+function disableChoices(){ choiceBtns.forEach(b=>{b.disabled=true;}); }
+
+// ======== SYSTEM PROMPT ========
+function buildSystemPrompt(){
+  const repStr=Object.entries(factionFavor).map(([k,v])=>{
+    const names={chaoting:'朝廷',sanfan:'三藩',wulin:'武林',xuelian:'血蓮宗',zhuhong:'朱紅閣'};
+    return `${names[k]}${v>0?'+':''}${v}`;
+  }).join('，');
+  const attrStr=`體魄${playerAttrs.tizhi},內力${playerAttrs.neili},武藝${playerAttrs.wuyi},身法${playerAttrs.shenfa},智謀${playerAttrs.zhimou},魅力${playerAttrs.meili}`;
+  return SYSTEM_PROMPT_BASE+`\n\n【玩家當前狀態】\n名字：${playerName}，出身：${playerOrigin}\n體力：${playerStats.hp}，銀兩：${playerStats.silver}，名望：${playerStats.fame}\n屬性：${attrStr}\n武藝境界：${getRank(playerAttrs.wuyi)}\n位置：${playerStats.location||'北京城西'}\n年份：${playerStats.year||1668}，回合：${playerStats.turn||turnNum}\n各方好感：${repStr}\n隨身物品：${playerItems.join('、')||'無'}\n已知線索：${clues.join('；')||'無'}`;
+}
+
+// ======== AI CALL ========
 async function callAI(userMsg){
   const msgs=[{role:'system',content:buildSystemPrompt()},...conversationHistory,{role:'user',content:userMsg}];
-  const endpoint=apiProvider==='openai'?'https://dpapi.cn/v1/chat/completions':'https://dpapi.cn/v1/chat/completions';
+  const endpoint=apiProvider==='openai'?'https://api.openai.com/v1/chat/completions':'https://dpapi.cn/v1/chat/completions';
   const model=apiProvider==='openai'?'gpt-4o-mini':'deepseek-chat';
-  const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},body:JSON.stringify({model,messages:msgs,response_format:{type:'json_object'},temperature:0.88,max_tokens:700})});
+  const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},body:JSON.stringify({model,messages:msgs,response_format:{type:'json_object'},temperature:0.88,max_tokens:800})});
   if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
   const data=await res.json();
   const content=data.choices[0].message.content;
   conversationHistory.push({role:'user',content:userMsg},{role:'assistant',content});
-  if(conversationHistory.length>26)conversationHistory=conversationHistory.slice(-26);
+  if(conversationHistory.length>28)conversationHistory=conversationHistory.slice(-28);
   return JSON.parse(content);
 }
 
 function getDemoScene(){
-  const s=DEMO[demoIndex%DEMO.length];demoIndex++;
-  return{story:s.story.replace('{name}',playerName),choices:s.choices,stats:playerStats,rep_delta:{fuqing:0,tianli:0,cao:0,wudu:0,saren:0},clue_found: demoIndex===2?'c5':null,ending:false};
+  const s=DEMO[demoIndex%DEMO.length]; demoIndex++;
+  return{story:s.story,choices:s.choices,stats:{hp:playerStats.hp,silver:playerStats.silver,wuyi:playerAttrs.wuyi,fame:playerStats.fame,location:playerStats.location,year:1668,turn:turnNum},attrs:playerAttrs,favor_delta:{chaoting:0,sanfan:0,wulin:0,xuelian:0,zhuhong:0},items_add:[],items_remove:[],clue:null,ending:false};
 }
 
+// ======== MAIN LOOP ========
 async function generateStory(choiceMade){
   if(isTyping)return;
-  disableChoices();errorBanner.classList.remove('show');loadingEl.classList.add('active');
-  const userMsg=choiceMade?`我選擇：${choiceMade}`:`請開始故事。玩家${playerName}，出身${playerOrigin}，大樑末年，初入亂世。`;
+  disableChoices(); errorBanner.classList.remove('show'); loadingEl.classList.add('active');
+  const userMsg=choiceMade?`我選擇：${choiceMade}`:`開始遊戲。玩家${playerName}，出身${playerOrigin}，在北京城西客棧醒來，康熙七年初春。`;
   let result;
   try{
-    if(!apiKey){await new Promise(r=>setTimeout(r,950));result=getDemoScene();}
-    else{result=await callAI(userMsg);}
+    if(!apiKey){await new Promise(r=>setTimeout(r,900)); result=getDemoScene();}
+    else{ result=await callAI(userMsg); }
   }catch(err){
     loadingEl.classList.remove('active');
     errorBanner.textContent=`⚠️ 無法連接 AI：${err.message}`;
@@ -733,161 +738,101 @@ async function generateStory(choiceMade){
   }
   loadingEl.classList.remove('active');
 
-  // Update stats
-  if(result.stats)playerStats={...playerStats,...result.stats};
-  updateStats();
+  if(result.stats){ playerStats={...playerStats,...result.stats}; turnNum=result.stats.turn||turnNum+1; }
+  if(result.stats?.attrs){ playerAttrs={...playerAttrs,...result.stats.attrs}; }
+  if(result.favor_delta){ Object.entries(result.favor_delta).forEach(([k,v])=>{ if(factionFavor[k]!==undefined) factionFavor[k]=Math.max(-100,Math.min(100,factionFavor[k]+(v||0))); }); }
+  if(result.items_add?.length){ playerItems=[...new Set([...playerItems,...result.items_add])]; }
+  if(result.items_remove?.length){ playerItems=playerItems.filter(i=>!result.items_remove.includes(i)); }
+  if(result.clue){ addClue(result.clue); }
 
-  // Update faction rep
-  if(result.rep_delta){
-    Object.entries(result.rep_delta).forEach(([k,v])=>{
-      if(factionRep[k]!==undefined) factionRep[k]=Math.max(0,Math.min(100,factionRep[k]+(v||0)));
-    });
-    updateRepBars();
-  }
-
-  // Clue
-  if(result.clue_found) showClue(result.clue_found);
-
-  chapterLabel.textContent=`第${chapterNum}回`;chapterNum++;
-  if(choiceMade)addToHistory(choiceMade,result.story.slice(0,48)+'…');
+  updateStats(); updateFavors(); updateAttrs(); updateItems();
+  if(apiKey&&qiRemaining>0){qiRemaining--;updateQiDisplay();}
+  if(choiceMade) addToHistory(choiceMade,result.story.slice(0,48)+'…');
 
   await typewriter(result.story);
-  if(result.ending){setTimeout(()=>showEnding(result.story),1500);return;}
+  if(result.ending){ setTimeout(()=>showEnding(result.story),1500); return; }
   showChoices(result.choices||[],200);
   choiceBtns.forEach(btn=>{
-    btn.onclick=()=>{const t=btn.querySelector('.choice-text').textContent;if(t)generateStory(t);};
+    btn.onclick=()=>{ const t=btn.querySelector('.choice-text').textContent; if(t)generateStory(t); };
   });
 }
 
-// ====== 存檔系統 ======
-function saveGame() {
-  const saveData = {
-    playerName, playerOrigin, chapterNum,
-    playerStats, factionRep, foundClues,
-    conversationHistory, historyLog,
-    savedAt: new Date().toLocaleString('zh-HK')
-  };
-  localStorage.setItem('wuxia_save', JSON.stringify(saveData));
-  showToast('存檔成功 ✓');
-}
-
-function loadGame() {
-  const raw = localStorage.getItem('wuxia_save');
-  if (!raw) { showToast('沒有存檔記錄'); return; }
-  const d = JSON.parse(raw);
-  playerName = d.playerName;
-  playerOrigin = d.playerOrigin;
-  chapterNum = d.chapterNum;
-  playerStats = d.playerStats;
-  factionRep = d.factionRep;
-  foundClues = d.foundClues || [];
-  conversationHistory = d.conversationHistory || [];
-  historyLog = d.historyLog || [];
-
-  screenIntro.classList.remove('active');
-  screenGame.classList.add('active');
-  document.getElementById('topbar-name').textContent = playerName + ' · 亂世江湖';
-  updateStats();
-  updateRepBars();
-
-  // 恢復已知因果碎片顯示
-  if (foundClues.length > 0) {
-    cluePanel.classList.add('show');
-    clueList.innerHTML = '';
-    foundClues.forEach(text => {
-      const item = document.createElement('div');
-      item.className = 'clue-item';
-      item.textContent = text;
-      clueList.appendChild(item);
-    });
-  }
-
-  // 恢復日誌顯示
-  if (historyLog.length > 0) {
-    historySection.style.display = 'block';
-    historyList.innerHTML = historyLog.map(h =>
-      `<div class="history-item"><span class="hi-c">▸ ${h.choice}</span>${h.summary}</div>`
-    ).join('');
-  }
-
-  showToast(`讀取存檔成功，第${chapterNum-1}回`);
-
-  // 繼續生成下一段故事
-  generateStory(null);
-}
-
-function deleteSave() {
-  localStorage.removeItem('wuxia_save');
-  showToast('存檔已刪除');
-  updateSaveBtn();
-}
-function exportSave() {
-  const raw = localStorage.getItem('wuxia_save');
-  if (!raw) { showToast('沒有存檔可以匯出'); return; }
-  const blob = new Blob([raw], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `江湖存檔_${playerName || '俠客'}_第${chapterNum-1}回.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('存檔已匯出 ✓');
-}
-
-function importSave(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      localStorage.setItem('wuxia_save', JSON.stringify(data));
-      showToast('存檔已匯入，請點「讀取存檔」繼續');
-      updateSaveBtn();
-    } catch {
-      showToast('檔案格式錯誤，請選正確的存檔檔案');
-    }
-  };
-  reader.readAsText(file);
-}
-function showToast(msg) {
-  let toast = document.getElementById('toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'toast';
-    toast.style.cssText = `
-      position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
-      background:rgba(44,58,74,0.9); color:#f4f9fd;
-      padding:0.5rem 1.2rem; border-radius:2rem;
-      font-size:0.78rem; letter-spacing:0.15em;
-      z-index:999; pointer-events:none;
-      font-family:'Noto Serif SC',serif;
-      box-shadow:0 4px 16px rgba(0,0,0,0.2);
-      transition: opacity 0.4s ease;
-    `;
-    document.body.appendChild(toast);
-  }
-  toast.textContent = msg;
-  toast.style.opacity = '1';
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 2000);
-}
-
-function updateSaveBtn() {
-  const hasSave = !!localStorage.getItem('wuxia_save');
-  const loadBtn = document.getElementById('load-btn');
-  const delBtn = document.getElementById('del-btn');
-  if (loadBtn) loadBtn.style.display = hasSave ? 'inline-block' : 'none';
-  if (delBtn) delBtn.style.display = hasSave ? 'inline-block' : 'none';
-}
-
+// ======== ENDING ========
 function showEnding(finalStory){
-  const highestRep=Object.entries(factionRep).sort((a,b)=>b[1]-a[1])[0];
-  const faction=WORLD.factions[highestRep[0]].name;
-  document.getElementById('ending-title').textContent=`${playerName} — ${faction}的傳說`;
+  const top=Object.entries(factionFavor).sort((a,b)=>b[1]-a[1])[0];
+  const fnames={chaoting:'朝廷之臣',sanfan:'三藩之雄',wulin:'武林宗師',xuelian:'血蓮護法',zhuhong:'朱紅英雄'};
+  document.getElementById('ending-title').textContent=`${playerName} — ${fnames[top[0]]||'江湖傳說'}`;
   document.getElementById('ending-text').textContent=finalStory;
   screenEnding.classList.add('active');
 }
+
+// ======== SAVE / LOAD ========
+function saveGame(){
+  const d={playerName,playerOrigin,apiProvider,playerStats,playerAttrs,factionFavor,playerItems,clues,historyLog,conversationHistory,turnNum,qiRemaining,savedAt:new Date().toLocaleString('zh-HK')};
+  localStorage.setItem('wuxia_v2_save',JSON.stringify(d));
+  showToast('存檔成功 ✓');
+  updateSaveBtn();
+}
+
+function loadGame(){
+  const raw=localStorage.getItem('wuxia_v2_save');
+  if(!raw){showToast('沒有存檔記錄');return;}
+  const d=JSON.parse(raw);
+  playerName=d.playerName; playerOrigin=d.playerOrigin; apiProvider=d.apiProvider||'deepseek';
+  playerStats=d.playerStats; playerAttrs=d.playerAttrs; factionFavor=d.factionFavor;
+  playerItems=d.playerItems||[]; clues=d.clues||[]; historyLog=d.historyLog||[];
+  conversationHistory=d.conversationHistory||[]; turnNum=d.turnNum||1; qiRemaining=d.qiRemaining||0;
+  apiKey=document.getElementById('api-key-input').value.trim();
+
+  screenIntro.classList.remove('active');
+  screenGame.classList.add('active');
+  document.getElementById('topbar-name').textContent=playerName+' · 書劍';
+  document.getElementById('stat-origin').textContent=playerOrigin.slice(0,4);
+  updateStats(); updateFavors(); updateAttrs(); updateItems();
+  panelsRow.style.display='grid';
+
+  if(clues.length>0){ cluesPanel.style.display='block'; clues.forEach(c=>{ const el=document.createElement('div'); el.className='clue-item'; el.textContent=c; document.getElementById('clues-list').appendChild(el); }); }
+  if(historyLog.length>0){ historySection.style.display='block'; historyList.innerHTML=historyLog.map(h=>`<div class="history-item"><span class="hi-c">▸ ${h.choice}</span>${h.summary}</div>`).join(''); }
+
+  showToast(`讀取存檔：${d.savedAt}`);
+  generateStory(null);
+}
+
+function deleteSave(){ localStorage.removeItem('wuxia_v2_save'); showToast('存檔已刪除'); updateSaveBtn(); }
+
+function exportSave(){
+  const raw=localStorage.getItem('wuxia_v2_save');
+  if(!raw){showToast('請先存檔再匯出');return;}
+  const blob=new Blob([raw],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url;
+  a.download=`清初俠影錄_${playerName||'俠客'}_第${turnNum}回合.json`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('存檔已匯出 ✓');
+}
+
+function importSave(e){
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{ try{ const d=JSON.parse(ev.target.result); localStorage.setItem('wuxia_v2_save',JSON.stringify(d)); showToast('存檔已匯入，請點「讀取存檔」繼續'); updateSaveBtn(); }catch{ showToast('檔案格式錯誤'); } };
+  reader.readAsText(file);
+}
+
+function updateSaveBtn(){
+  const has=!!localStorage.getItem('wuxia_v2_save');
+  ['load-btn','del-btn','export-btn'].forEach(id=>{ const el=document.getElementById(id); if(el)el.style.display=has?'inline-block':'none'; });
+}
+
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){ t=document.createElement('div'); t.id='toast';
+    t.style.cssText='position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:rgba(44,58,74,0.9);color:#f4f9fd;padding:0.5rem 1.2rem;border-radius:2rem;font-size:0.75rem;letter-spacing:0.15em;z-index:999;pointer-events:none;font-family:"Noto Serif SC",serif;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:opacity 0.4s ease;';
+    document.body.appendChild(t); }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._timer); t._timer=setTimeout(()=>{t.style.opacity='0';},2200);
+}
+
+updateSaveBtn();
 </script>
 </body>
 </html>
