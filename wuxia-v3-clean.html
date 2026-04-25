@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>書劍 — 測試版本三</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+:root {
+  --bg-deep:#1a1510; --bg-mid:#211a14; --border: rgba(74,58,46,0.6);
+  --accent: #c0392b; --accent-dim: #8a2a1e; --danger: #e04030;
+  --gold: #c8922a; --shadow-md: 0 8px 32px rgba(0,0,0,0.55);
+  --transition: 220ms cubic-bezier(0.16,1,0.3,1);
+  --font-display: 'Ma Shan Zheng','Noto Serif SC',serif;
+  --font-body: 'Noto Serif SC',serif;
+  --red:#c0392b; --red-dim:#8a2a1e; --red-bright:#e04030;
+  --text-main:#e8d8c0; --text-dim:#b09878; --text-ghost:#6a5a4a;
+}
+body { min-height:100dvh; font-family:var(--font-body); color:var(--text-main); background:var(--bg-deep); overflow-x:hidden; }
+.bg-wash { position:fixed; inset:0; z-index:0; pointer-events:none;
+  background: radial-gradient(ellipse 90% 55% at 50% 0%,rgba(160,40,20,0.14) 0%,transparent 60%),
+    linear-gradient(175deg,#1a1510 0%,#1e1812 40%,#16120e 100%); }
+.screen { position:relative; z-index:1; display:none; }
+.screen.active { display:flex; }
+
+/* INTRO */
+#screen-intro { flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:2rem 1rem 5rem; text-align:center; }
+.intro-title { font-family:var(--font-display); font-size:clamp(2.8rem,9vw,5rem); color:var(--text-main); letter-spacing:0.2em; line-height:1.1; margin-bottom:0.3rem; text-shadow:0 0 40px rgba(192,57,43,0.4); }
+.intro-subtitle { font-size:0.75rem; color:#a89880; letter-spacing:0.4em; margin-bottom:0.5rem; }
+.version-badge { display:inline-block; font-size:0.58rem; letter-spacing:0.22em; color:var(--red); border:1px solid rgba(192,57,43,0.35); border-radius:2px; padding:0.13rem 0.55rem; margin-bottom:1.5rem; background:rgba(192,57,43,0.06); }
+.brush-line { width:160px; height:1px; background:linear-gradient(90deg,transparent,rgba(192,57,43,0.45),transparent); margin:0 auto 1.75rem; }
+.intro-card { background:rgba(42,33,26,0.93); border:1px solid var(--border); border-radius:1.5rem; padding:1.75rem; width:100%; max-width:400px; backdrop-filter:blur(16px); box-shadow:var(--shadow-md); display:flex; flex-direction:column; gap:1rem; }
+.form-label { display:block; font-size:0.7rem; color:var(--text-dim); letter-spacing:0.28em; margin-bottom:0.35rem; }
+.name-input { width:100%; background:rgba(26,21,16,0.85); border:1px solid var(--border); border-radius:0.6rem; padding:0.65rem 1rem; font-family:var(--font-body); font-size:0.95rem; color:var(--text-main); text-align:center; letter-spacing:0.12em; outline:none; }
+.name-input:focus { border-color:var(--red-dim); box-shadow:0 0 0 3px rgba(192,57,43,0.15); }
+.name-input::placeholder { color:var(--text-ghost); }
+.origin-page { display:none; }
+.origin-page.active { display:flex; flex-direction:column; gap:0.4rem; }
+.origin-btn { background:rgba(26,21,16,0.65); border:1px solid var(--border); border-radius:0.75rem; padding:0.6rem 0.9rem; color:var(--text-dim); font-family:var(--font-body); font-size:0.8rem; cursor:pointer; transition:all var(--transition); text-align:left; display:flex; align-items:center; gap:0.65rem; }
+.origin-btn:hover { border-color:var(--red-dim); color:var(--text-main); background:rgba(192,57,43,0.08); }
+.origin-btn.selected { border-color:var(--red); color:#e04030; background:rgba(192,57,43,0.12); }
+.origin-btn .ob-icon { font-size:1.1em; flex-shrink:0; }
+.origin-btn .ob-text { flex:1; }
+.origin-btn .ob-hint { font-size:0.6rem; text-align:right; line-height:1.7; }
+.origin-btn .ob-hint .hint-label { font-size:0.58rem; color:#d4b890; display:block; }
+.origin-btn .ob-hint .hint-val { color:#ffd080; }
+.page-nav { display:flex; gap:0.5rem; justify-content:center; }
+.page-nav-btn { background:rgba(26,21,16,0.7); border:1px solid var(--border); border-radius:0.5rem; padding:0.4rem 0.9rem; font-family:var(--font-body); font-size:0.72rem; color:var(--text-ghost); cursor:pointer; transition:all var(--transition); }
+.page-nav-btn:hover { border-color:var(--red-dim); color:var(--text-main); }
+.page-nav-btn.active-pg { border-color:var(--red); color:#e04030; background:rgba(192,57,43,0.08); }
+.start-btn { width:100%; background:linear-gradient(135deg,var(--red-dim) 0%,var(--red) 100%); border:1px solid rgba(192,57,43,0.5); border-radius:0.7rem; padding:0.82rem; color:var(--text-main); font-family:var(--font-display); font-size:1.15rem; letter-spacing:0.22em; cursor:pointer; box-shadow:0 4px 20px rgba(192,57,43,0.3); transition:all var(--transition); }
+.start-btn:hover { transform:translateY(-1px); }
+.api-details { width:100%; max-width:400px; margin-top:0.5rem; }
+.api-details summary { font-size:0.68rem; color:var(--text-ghost); letter-spacing:0.18em; cursor:pointer; list-style:none; text-align:center; padding:0.4rem; }
+.api-details summary::-webkit-details-marker { display:none; }
+.api-details summary::after { content:' ▾'; }
+details[open] summary::after { content:' ▴'; }
+.api-inner { background:rgba(26,21,16,0.93); border:1px solid var(--border); border-radius:0.75rem; padding:0.9rem; margin-top:0.4rem; display:flex; flex-direction:column; gap:0.5rem; }
+.api-inner select, .api-inner input { width:100%; background:rgba(26,21,16,0.9); border:1px solid var(--border); border-radius:0.45rem; padding:0.42rem 0.7rem; font-family:var(--font-body); font-size:0.75rem; color:var(--text-main); outline:none; }
+.api-note { font-size:0.65rem; color:var(--text-ghost); line-height:1.8; }
+.api-note a { color:var(--accent-dim); }
+
+/* GAME */
+#screen-game { flex-direction:column; min-height:100dvh; }
+.topbar { position:sticky; top:0; z-index:10; background:rgba(26,21,16,0.95); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0.55rem 1.25rem; display:flex; align-items:center; justify-content:space-between; gap:0.5rem; }
+.topbar-left { display:flex; flex-direction:column; gap:0.08rem; }
+.topbar-title { font-family:var(--font-display); font-size:1rem; color:var(--text-main); letter-spacing:0.18em; }
+.topbar-sub { font-size:0.55rem; color:var(--text-ghost); letter-spacing:0.18em; }
+.stats-grid { display:grid; grid-template-columns:repeat(4,auto); gap:0.3rem; }
+.stat-chip { display:flex; align-items:center; gap:0.22rem; font-size:0.78rem; background:rgba(26,21,16,0.75); border:1px solid var(--border); border-radius:999px; padding:0.22rem 0.72rem; white-space:nowrap; }
+.stat-chip .sl { color:var(--text-ghost); font-size:0.8em; }
+.stat-chip .sv { color:var(--text-main); font-weight:600; }
+.stat-chip.hp .sl { color:#ffcc44; }
+.stat-chip.hp .sv { color:#ff8870; }
+.stat-chip.gold .sv { color:#c8922a; }
+.stat-chip.rank .sv { color:var(--accent); font-size:0.72em; }
+.game-layout { flex:1; max-width:780px; margin:0 auto; width:100%; padding:1.5rem 1rem 5rem; display:flex; flex-direction:column; gap:1rem; }
+.story-card { background:rgba(30,24,18,0.92); border:1px solid var(--border); border-radius:1.2rem; padding:1.5rem; position:relative; }
+.chapter-label { font-size:0.6rem; color:var(--text-ghost); letter-spacing:0.3em; display:block; margin-bottom:0.8rem; }
+#story-text { font-size:0.96rem; line-height:2.15; color:var(--text-main); min-height:4rem; white-space:pre-wrap; }
+.cursor { display:inline-block; width:2px; height:1em; background:var(--text-dim); animation:blink 1s infinite; vertical-align:text-bottom; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.loading { display:none; text-align:center; padding:1rem; color:var(--text-ghost); font-size:0.75rem; letter-spacing:0.2em; }
+.loading.active { display:block; }
+.loading::after { content:''; display:inline-block; width:0.5rem; height:0.5rem; border-radius:50%; background:var(--text-ghost); animation:pulse 1s infinite; margin-left:0.4rem; }
+@keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+.error-banner { display:none; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.4); border-radius:0.6rem; padding:0.6rem 0.9rem; font-size:0.72rem; color:#e04030; margin-top:0.5rem; }
+.error-banner.show { display:block; }
+.choices-section { display:flex; flex-direction:column; gap:0.5rem; }
+.choices-label { font-size:0.58rem; color:var(--text-ghost); letter-spacing:0.25em; }
+.choice-btn { background:rgba(30,24,18,0.85); border:1px solid var(--border); border-radius:0.8rem; padding:0.78rem 1rem; color:var(--text-dim); font-family:var(--font-body); font-size:0.85rem; cursor:pointer; transition:all var(--transition); text-align:left; display:flex; align-items:center; gap:0.7rem; }
+.choice-btn:hover:not(:disabled) { border-color:rgba(192,57,43,0.5); color:var(--text-main); background:rgba(192,57,43,0.06); }
+.choice-btn:disabled { opacity:0.45; cursor:not-allowed; }
+.choice-num { font-size:0.65rem; color:var(--text-ghost); min-width:1rem; }
+.choice-text { flex:1; line-height:1.6; }
+.panels-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+@media(max-width:600px){ .panels-row{grid-template-columns:1fr;} }
+.panel-card { background:rgba(30,24,18,0.9); border:1px solid var(--border); border-radius:0.9rem; padding:0.9rem 1rem; }
+.panel-title { font-size:0.62rem; color:var(--text-ghost); letter-spacing:0.25em; margin-bottom:0.55rem; }
+.rep-row { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.32rem; }
+.rep-name { font-size:0.65rem; color:var(--text-dim); width:52px; flex-shrink:0; }
+.rep-bar-bg { flex:1; height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+.rep-bar { height:100%; border-radius:2px; transition:width 0.5s; width:50%; }
+.rep-val { font-size:0.6rem; color:var(--text-ghost); width:28px; text-align:right; }
+.rb-chaoting { background:#4488cc; } .rb-sanfan { background:#cc8844; } .rb-wulin { background:#44aa66; }
+.rb-xuelian { background:#aa44aa; } .rb-zhuhong { background:#cc4444; }
+.attr-row { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.28rem; }
+.attr-name { font-size:0.65rem; color:var(--text-dim); width:32px; }
+.attr-bar-bg { flex:1; height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+.attr-bar { height:100%; background:var(--gold); border-radius:2px; transition:width 0.5s; }
+.attr-val { font-size:0.6rem; color:var(--text-ghost); width:24px; text-align:right; }
+.item-list { display:flex; flex-wrap:wrap; gap:0.3rem; }
+.item-tag { font-size:0.68rem; color:var(--text-dim); padding:0.2rem 0.55rem; border:1px solid var(--border); border-radius:0.4rem; background:rgba(26,21,16,0.5); display:inline-block; }
+.clue-item { font-size:0.7rem; color:#88aacc; padding:0.2rem 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.history-item { font-size:0.68rem; color:var(--text-dim); padding:0.3rem 0; border-bottom:1px solid rgba(255,255,255,0.04); line-height:1.7; }
+.hi-c { color:var(--gold); display:block; font-size:0.65rem; }
+.save-row { display:flex; gap:0.4rem; flex-wrap:wrap; }
+.sv-btn { background:rgba(26,21,16,0.8); border:1px solid var(--border); border-radius:0.5rem; padding:0.35rem 0.7rem; font-family:var(--font-body); font-size:0.68rem; color:var(--text-ghost); cursor:pointer; }
+.sv-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+/* Item category */
+.cat-filter-bar { display:flex; flex-wrap:wrap; gap:0.3rem; margin-bottom:0.5rem; }
+.cat-btn { font-size:0.6rem; padding:0.18rem 0.5rem; border-radius:0.35rem; border:1px solid; cursor:pointer; letter-spacing:0.05em; background:transparent; transition:all 0.2s; color:inherit; }
+.cat-btn.active { color:#111 !important; }
+.c-all  { border-color:#aaa; color:#aaa; } .c-all.active  { background:#aaa; }
+.c-武器 { border-color:#e07070; color:#e07070; } .c-武器.active { background:#e07070; }
+.c-丹藥 { border-color:#70c070; color:#70c070; } .c-丹藥.active { background:#70c070; }
+.c-裝備 { border-color:#70a0e0; color:#70a0e0; } .c-裝備.active { background:#70a0e0; }
+.c-材料 { border-color:#c0a050; color:#c0a050; } .c-材料.active { background:#c0a050; }
+.c-秘籍 { border-color:#c070c0; color:#c070c0; } .c-秘籍.active { background:#c070c0; }
+.c-暗器 { border-color:#e09050; color:#e09050; } .c-暗器.active { background:#e09050; }
+.c-劇情 { border-color:#f0d060; color:#f0d060; } .c-劇情.active { background:#f0d060; }
+.c-其他 { border-color:#909090; color:#909090; } .c-其他.active { background:#909090; }
+.item-group-label { font-size:0.55rem; letter-spacing:0.2em; color:var(--text-ghost); margin:0.4rem 0 0.2rem; display:block; }
+
+/* Info drawer */
+#info-btn { position:fixed; bottom:5.5rem; right:1rem; z-index:200; width:2.6rem; height:2.6rem; border-radius:50%; background:rgba(44,34,20,0.92); border:1px solid var(--border); color:var(--text-dim); font-size:1.1rem; cursor:pointer; display:none; align-items:center; justify-content:center; box-shadow:0 2px 12px rgba(0,0,0,0.4); }
+#info-overlay { position:fixed; inset:0; z-index:299; background:rgba(0,0,0,0.4); display:none; }
+#info-drawer { position:fixed; top:0; right:-320px; width:300px; height:100vh; z-index:300; background:rgba(22,17,11,0.97); border-left:1px solid var(--border); backdrop-filter:blur(12px); transition:right 0.3s ease; display:flex; flex-direction:column; overflow:hidden; }
+#info-drawer.open { right:0; }
+#info-drawer-header { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.1rem 0.6rem; border-bottom:1px solid var(--border); }
+#info-drawer-header h3 { font-size:0.75rem; letter-spacing:0.2em; color:var(--text-dim); margin:0; }
+#info-close { background:none; border:none; color:var(--text-ghost); font-size:1.1rem; cursor:pointer; padding:0.2rem 0.4rem; }
+.info-tabs { display:flex; border-bottom:1px solid var(--border); }
+.info-tab { flex:1; padding:0.5rem; font-size:0.65rem; letter-spacing:0.15em; color:var(--text-ghost); background:none; border:none; cursor:pointer; }
+.info-tab.active { color:var(--gold); border-bottom:1px solid var(--gold); }
+.info-content { flex:1; overflow-y:auto; padding:0.9rem 1rem; }
+.info-attr-row { margin-bottom:0.9rem; }
+.info-attr-name { font-size:0.72rem; color:var(--gold); }
+.info-attr-val { font-size:0.7rem; color:var(--text-main); margin-left:0.4rem; }
+.info-attr-desc { font-size:0.65rem; color:var(--text-dim); line-height:1.7; margin-top:0.2rem; }
+.info-item-row { margin-bottom:0.75rem; padding-bottom:0.75rem; border-bottom:1px solid rgba(255,255,255,0.05); }
+.info-item-name { font-size:0.72rem; color:var(--gold); }
+.info-item-desc { font-size:0.65rem; color:var(--text-dim); line-height:1.7; margin-top:0.15rem; }
+.info-empty { font-size:0.65rem; color:var(--text-ghost); text-align:center; margin-top:2rem; }
+
+/* Ending */
+#screen-ending { flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:2rem 1rem; text-align:center; }
+.ending-title { font-family:var(--font-display); font-size:2rem; letter-spacing:0.2em; margin-bottom:1rem; color:var(--gold); }
+.ending-text { max-width:500px; line-height:2; color:var(--text-dim); margin-bottom:2rem; font-size:0.9rem; }
+.restart-btn { background:var(--red-dim); border:1px solid var(--red); border-radius:0.7rem; padding:0.7rem 2rem; color:var(--text-main); font-family:var(--font-display); font-size:1rem; cursor:pointer; letter-spacing:0.2em; }
+
+</style>
+</head>
+<body>
+<div class="bg-wash"></div>
+
+<!-- INTRO -->
+<section id="screen-intro" class="screen active">
+  <div class="intro-era">康熙七年 · 書劍江湖</div>
+  <h1 class="intro-title">書　劍</h1>
+  <div class="intro-subtitle">武俠文字遊戲</div>
+  <span class="version-badge">測試版本三</span>
+  <div class="brush-line"></div>
+  <div class="intro-card">
+    <div>
+      <label class="form-label">俠客之名</label>
+      <input id="player-name" class="name-input" type="text" placeholder="輸入你的名字" maxlength="10">
+    </div>
+    <div>
+      <label class="form-label">選擇出身</label>
+      <div id="p1" class="origin-page active"></div>
+      <div id="p2" class="origin-page"></div>
+      <div class="page-nav" style="margin-top:0.5rem">
+        <button class="page-nav-btn active-pg" onclick="goPage(1)">第一頁</button>
+        <button class="page-nav-btn" onclick="goPage(2)">第二頁</button>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startGame()">踏入江湖</button>
+  </div>
+  <details class="api-details">
+    <summary>API 設定</summary>
+    <div class="api-inner">
+      <select id="api-provider">
+        <option value="silra">Silra（推薦）</option>
+        <option value="deepseek">DeepSeek 官方</option>
+        <option value="openai">OpenAI</option>
+      </select>
+      <input type="password" id="api-key-input" placeholder="輸入 API Key（空白為示範模式）">
+      <input type="number" id="qi-input" placeholder="真氣次數限制（空白為無限）" min="1">
+      <div class="save-row">
+        <button class="sv-btn" onclick="loadGame()" id="load-btn" style="display:none">讀取存檔</button>
+        <button class="sv-btn" onclick="deleteSave()" id="del-btn" style="display:none">刪除存檔</button>
+        <button class="sv-btn" onclick="exportSave()" id="export-btn" style="display:none">匯出存檔</button>
+        <label class="sv-btn" style="cursor:pointer">匯入存檔<input type="file" accept=".json" onchange="importSave(event)" style="display:none"></label>
+      </div>
+      <p class="api-note">不填 API Key 可用示範模式體驗。Silra 申請：<a href="https://api.silra.cn" target="_blank">api.silra.cn</a></p>
+    </div>
+  </details>
+</section>
+
+<!-- GAME -->
+<section id="screen-game" class="screen">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="topbar-name">書劍</div>
+      <div class="topbar-sub">康熙 <span id="topbar-year">1668</span> 年 · 第 <span id="topbar-turn">1</span> 回合</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-chip hp"><span class="sl">♥</span><span class="sv" id="stat-hp">100</span></div>
+      <div class="stat-chip gold"><span class="sl">兩</span><span class="sv" id="stat-silver">100</span></div>
+      <div class="stat-chip"><span class="sl">氣</span><span class="sv" id="stat-qi">—</span></div>
+      <div class="stat-chip"><span class="sl">出身</span><span class="sv" id="stat-origin">—</span></div>
+      <div class="stat-chip rank"><span class="sv" id="stat-rank">初學乍練 10</span></div>
+      <div class="stat-chip"><span class="sl">名</span><span class="sv" id="stat-fame">5</span></div>
+      <div class="stat-chip"><span class="sl">地</span><span class="sv" id="stat-loc">北京</span></div>
+    </div>
+  </div>
+
+  <div class="game-layout">
+    <div class="story-card">
+      <span class="chapter-label" id="chapter-label">第1回合 · 北京</span>
+      <div id="story-text"></div><span id="cursor" class="cursor" style="display:none"></span>
+      <div class="loading" id="loading">正在生成故事</div>
+      <div class="error-banner" id="error-banner"></div>
+    </div>
+
+    <div class="choices-section">
+      <span class="choices-label">你的選擇（輸入數字 1–4）</span>
+      <button class="choice-btn" id="c1"><span class="choice-num">1</span><span class="choice-text"></span></button>
+      <button class="choice-btn" id="c2"><span class="choice-num">2</span><span class="choice-text"></span></button>
+      <button class="choice-btn" id="c3"><span class="choice-num">3</span><span class="choice-text"></span></button>
+      <button class="choice-btn" id="c4"><span class="choice-num">4</span><span class="choice-text"></span></button>
+    </div>
+
+    <div class="panels-row" id="panels-row" style="display:none">
+      <!-- Faction reputation -->
+      <div class="panel-card">
+        <div class="panel-title">各方勢力好感</div>
+        <div class="rep-row"><span class="rep-name">朝廷</span><div class="rep-bar-bg"><div id="rb-chaoting" class="rep-bar rb-chaoting"></div></div><span class="rep-val" id="rv-chaoting">0</span></div>
+        <div class="rep-row"><span class="rep-name">三藩</span><div class="rep-bar-bg"><div id="rb-sanfan" class="rep-bar rb-sanfan"></div></div><span class="rep-val" id="rv-sanfan">0</span></div>
+        <div class="rep-row"><span class="rep-name">武林</span><div class="rep-bar-bg"><div id="rb-wulin" class="rep-bar rb-wulin"></div></div><span class="rep-val" id="rv-wulin">0</span></div>
+        <div class="rep-row"><span class="rep-name">血蓮宗</span><div class="rep-bar-bg"><div id="rb-xuelian" class="rep-bar rb-xuelian"></div></div><span class="rep-val" id="rv-xuelian">0</span></div>
+        <div class="rep-row"><span class="rep-name">朱紅閣</span><div class="rep-bar-bg"><div id="rb-zhuhong" class="rep-bar rb-zhuhong"></div></div><span class="rep-val" id="rv-zhuhong">0</span></div>
+      </div>
+      <!-- Attributes -->
+      <div class="panel-card">
+        <div class="panel-title">角色屬性</div>
+        <div class="attr-row"><span class="attr-name">體魄</span><div class="attr-bar-bg"><div id="ab-tizhi" class="attr-bar"></div></div><span class="attr-val" id="av-tizhi">10</span></div>
+        <div class="attr-row"><span class="attr-name">內力</span><div class="attr-bar-bg"><div id="ab-neili" class="attr-bar"></div></div><span class="attr-val" id="av-neili">10</span></div>
+        <div class="attr-row"><span class="attr-name">武藝</span><div class="attr-bar-bg"><div id="ab-wuyi" class="attr-bar"></div></div><span class="attr-val" id="av-wuyi">10</span></div>
+        <div class="attr-row"><span class="attr-name">身法</span><div class="attr-bar-bg"><div id="ab-shenfa" class="attr-bar"></div></div><span class="attr-val" id="av-shenfa">10</span></div>
+        <div class="attr-row"><span class="attr-name">智謀</span><div class="attr-bar-bg"><div id="ab-zhimou" class="attr-bar"></div></div><span class="attr-val" id="av-zhimou">10</span></div>
+        <div class="attr-row"><span class="attr-name">魅力</span><div class="attr-bar-bg"><div id="ab-meili" class="attr-bar"></div></div><span class="attr-val" id="av-meili">10</span></div>
+      </div>
+      <!-- Items -->
+      <div class="panel-card" id="items-panel" style="display:none">
+        <div class="panel-title">隨身物品</div>
+        <div class="cat-filter-bar" id="item-filter-bar"></div>
+        <div class="item-list" id="item-list"></div>
+      </div>
+      <!-- Clues -->
+      <div class="panel-card" id="clues-panel" style="display:none">
+        <div class="panel-title">線索紀錄</div>
+        <div id="clues-list"></div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div id="history-section" style="display:none">
+      <div style="font-size:0.6rem;color:#6a5a4a;letter-spacing:0.25em;margin-bottom:0.4rem">行動記錄</div>
+      <div id="history-list"></div>
+    </div>
+
+    <!-- Save row -->
+    <div class="save-row">
+      <button class="sv-btn" onclick="saveGame()">存檔</button>
+    </div>
+  </div>
+</section>
+
+<!-- ENDING -->
+<section id="screen-ending" class="screen">
+  <div class="ending-title" id="ending-title">江湖落幕</div>
+  <p class="ending-text" id="ending-text"></p>
+  <button class="restart-btn" id="restart-btn">重入江湖</button>
+</section>
+
+<!-- INFO DRAWER -->
+<div id="info-overlay"></div>
+<button id="info-btn" style="display:none">📖</button>
+<div id="info-drawer">
+  <div id="info-drawer-header">
+    <h3>資訊總覽</h3>
+    <button id="info-close">✕</button>
+  </div>
+  <div class="info-tabs">
+    <button class="info-tab active" onclick="showInfoTab('attrs')">角色屬性</button>
+    <button class="info-tab" onclick="showInfoTab('items')">隨身物品</button>
+  </div>
+  <div class="info-content" id="info-content"></div>
+</div>
+
+<script>
+
+// ======= WORLD DATA =======
+const ORIGINS = {
+  '滿洲貴族後裔': { favor:{chaoting:10,sanfan:-5,wulin:-2,xuelian:-3,zhuhong:-10}, attrs:{tizhi:15,neili:10,wuyi:15,shenfa:10,zhimou:10,meili:15,fame:5}, silver:100, items:['黃馬褂（免一次被捕）'], loc:'北京' },
+  '漢人書生世家': { favor:{chaoting:-3,sanfan:2,wulin:5,xuelian:-4,zhuhong:6},   attrs:{tizhi:10,neili:10,wuyi:10,shenfa:10,zhimou:20,meili:15,fame:5}, silver:50,  items:['四書五經手抄本','墨硯（可賣5兩）'], loc:'北京' },
+  '江湖孤兒':     { favor:{chaoting:-2,sanfan:0,wulin:8,xuelian:-6,zhuhong:2},    attrs:{tizhi:15,neili:10,wuyi:20,shenfa:15,zhimou:5,meili:5,fame:5},   silver:20,  items:['舊門派腰牌','補氣丹×3'], loc:'揚州' },
+  '魔教遺孤':     { favor:{chaoting:-5,sanfan:-2,wulin:-8,xuelian:10,zhuhong:-3}, attrs:{tizhi:15,neili:15,wuyi:15,shenfa:10,zhimou:10,meili:5,fame:5},  silver:20,  items:['血蓮殘片','基礎毒藥配方'], loc:'江南山區' },
+  '海外歸來':     { favor:{chaoting:0,sanfan:0,wulin:0,xuelian:0,zhuhong:0},     attrs:{tizhi:10,neili:10,wuyi:10,shenfa:10,zhimou:10,meili:10,fame:10}, silver:50,  items:['異國兵器','航海日誌'], loc:'廣州' },
+  '明室遠親':     { favor:{chaoting:-10,sanfan:6,wulin:2,xuelian:-2,zhuhong:10}, attrs:{tizhi:10,neili:10,wuyi:10,shenfa:10,zhimou:15,meili:15,fame:10}, silver:50,  items:['太祖高皇帝玉牌','家傳劍譜'], loc:'台灣' },
+  '商人子弟':     { favor:{chaoting:2,sanfan:4,wulin:-1,xuelian:-1,zhuhong:-2},  attrs:{tizhi:10,neili:5,wuyi:10,shenfa:10,zhimou:15,meili:20,fame:5},  silver:200, items:['通關文牒'], loc:'揚州' },
+  '綠林草莽':     { favor:{chaoting:-8,sanfan:3,wulin:3,xuelian:-3,zhuhong:5},   attrs:{tizhi:20,neili:5,wuyi:15,shenfa:15,zhimou:5,meili:5,fame:5},   silver:30,  items:['夜行衣','迷魂香×2'], loc:'北京郊外' },
+  '白山舊姓（北地貴裔）': { favor:{chaoting:8,sanfan:-2,wulin:-4,xuelian:-2,zhuhong:-10}, attrs:{tizhi:15,neili:10,wuyi:15,shenfa:12,zhimou:8,meili:10,fame:10}, silver:80, items:['金氏腰牌（免費驛站3次）','祖傳角弓（1d6遠程）'], loc:'盛京' }
+};
+
+const RANK_THRESHOLDS = [
+  [0,'初學乍練'],[20,'三流'],[40,'二流'],[60,'一流'],[80,'爐火純青'],
+  [100,'登峰造極'],[120,'宗師'],[150,'超凡入聖'],[180,'化境'],[220,'玄境']
+];
+function getRank(v){ let r='初學乍練'; for(const [t,n] of RANK_THRESHOLDS){ if(v>=t) r=n; else break; } return r; }
+
+const ITEM_DESCS_DEFAULT = {
+  '黃馬褂（免一次被捕）':'皇家賜服，免一次被捕',
+  '四書五經手抄本':'儒家經典，提升智謀',
+  '墨硯（可賣5兩）':'文房用品，可換銀兩',
+  '舊門派腰牌':'武林舊識，開門通行',
+  '補氣丹×3':'回復內力30點',
+  '血蓮殘片':'魔教信物，認親用',
+  '基礎毒藥配方':'可製作普通毒藥',
+  '異國兵器':'西洋刀劍，攻擊+2',
+  '航海日誌':'海外情報，解任務',
+  '太祖高皇帝玉牌':'明室信物，認親用',
+  '家傳劍譜':'基礎劍法，武藝+2',
+  '通關文牒':'官方文件，通關免查',
+  '夜行衣':'夜間行動不易被發現',
+  '迷魂香×2':'使敵人暈眩一回合',
+  '金氏腰牌（免費驛站3次）':'北地憑證，免費坐驛',
+  '祖傳角弓（1d6遠程）':'遠程武器，攻擊1d6',
+  '金瘡藥':'治療外傷，回血20點',
+  '解毒丹':'解除中毒狀態',
+  '輕功秘笈':'修煉後身法+5',
+  '內功心法':'修煉後內力+5'
+};
+
+const ITEM_CATS_DEFAULT = {
+  '黃馬褂（免一次被捕）':'裝備','四書五經手抄本':'劇情','墨硯（可賣5兩）':'其他',
+  '舊門派腰牌':'劇情','補氣丹×3':'丹藥','血蓮殘片':'劇情','基礎毒藥配方':'材料',
+  '異國兵器':'武器','航海日誌':'劇情','太祖高皇帝玉牌':'劇情','家傳劍譜':'秘籍',
+  '通關文牒':'劇情','夜行衣':'裝備','迷魂香×2':'暗器','金氏腰牌（免費驛站3次）':'劇情',
+  '祖傳角弓（1d6遠程）':'武器','金瘡藥':'丹藥','解毒丹':'丹藥',
+  '輕功秘笈':'秘籍','內功心法':'秘籍'
+};
+
+const ATTR_DESCS = {
+  tizhi: { name:'體魄', desc:'決定生命上限（體魄×2+20）及耐力。越高越難被一擊斃命。' },
+  neili: { name:'內力', desc:'決定真氣上限（內力×2+20）。施展內功招式的基礎。' },
+  wuyi:  { name:'武藝', desc:'決定武功境界與命中率。達宗師後需完成突破任務才能繼續提升。' },
+  shenfa:{ name:'身法', desc:'決定先攻順序與迴避能力（AC=10+調整值）。越高越難被命中。' },
+  zhimou:{ name:'智謀', desc:'影響計謀、識破陷阱、談判的成功率。可繞過部分戰鬥。' },
+  meili: { name:'魅力', desc:'影響說服、交友、降低勢力敵意的成功率。' }
+};
+
+const DEMO = [
+  { story:'康熙七年，北京城西。\n\n寒風捲著黃葉掠過客棧簷角，你從夢中醒來，窗外已是黃昏。\n\n樓下喧嘩聲驟起——幾名差役正押著一個老者，老者神情倉皇卻不失從容。街道兩旁的行人紛紛側目，卻無一人敢上前。', choices:['出手阻攔差役，救下老者','暗中跟隨，查明老者身份','前往附近酒館打聽消息','悄悄離開，出城而去'] },
+  { story:'你走進飄著酒香的酒館，找了個角落坐下。\n\n鄰桌兩名江湖人壓低聲音交談，你隱約聽見「連珠火銃」四字。掌櫃湊近低聲道：「客官，看您面生。最近城裡不太平，三藩那邊又有消息傳來……」', choices:['向掌櫃追問三藩的消息','起身接近鄰桌，打聽火銃','點酒靜觀，收集更多情報','付錢離開，前往城西破廟'] },
+  { story:'你跟蹤老者至一處廢棄的四合院。月色下，老者轉身直視你，眼神深邃如潭。\n\n「跟了半條街，總算肯現身了。」他聲音沙啞而平靜，「血蓮宗的事，你最好不要摻和……不過既然來了，這個你收著。」他遞來一塊令牌。', choices:['接下令牌，詢問血蓮宗之事','拒絕令牌，轉身離開','拔刀警戒，質問他的身份','悄悄跟著他繼續走'] }
+];
+let demoIndex = 0;
+function getDemoScene(){
+  const s = DEMO[demoIndex % DEMO.length];
+  demoIndex++;
+  return { story:s.story, choices:s.choices, stats:{hp:100,silver:50,fame:5,location:'北京',turn:demoIndex,attrs:{tizhi:10,neili:10,wuyi:10,shenfa:10,zhimou:10,meili:10}}, favor_delta:{chaoting:0,sanfan:0,wulin:0,xuelian:0,zhuhong:0}, items_add:[], items_remove:[], clue:null, ending:false };
+}
+
+// ======= SYSTEM PROMPT =======
+const SYSTEM_PROMPT_BASE = [
+  "你是一個即時文字武俠遊戲《書劍》的引擎。玩家用數字 1-4 選擇行動，你生成故事並管理數值。全部用現代白話中文，簡單易懂。",
+  "",
+  "## 語言規則",
+  "- 像朋友講故事一樣，不要文言文。",
+  "- 名詞解釋：八旗（滿洲貴族軍隊）、三藩（吳三桂等三個藩王）、朱紅閣（反清組織）、血蓮宗（被誤會的魔教）。",
+  "- 每段文字不超過 4 行。",
+  "- 嚴格維持前後一致：NPC存活/死亡、玩家所在地、未完成的任務，必須與前文對應，不可矛盾。",
+  "- 銀兩不足時，不能讓玩家購買物品，明確說明「銀兩不足」並給出其他選項。",
+  "",
+  "## 玩家屬性（7項，範圍0~200）",
+  "體魄(生命、耐力)、內力、武藝、身法、智謀、魅力、名望(-100~100)",
+  "調整值 = floor((屬性-10)/2)",
+  "武藝稱號：初學乍練(0-19)→三流(20-39)→二流(40-59)→一流(60-79)→爐火純青(80-99)→登峰造極(100-119)→宗師(120-149)→超凡入聖(150-179)→化境(180-219)→玄境(220+)",
+  "",
+  "## 行動判定 (D&D風格)",
+  "- 擲d20加調整值，達到DC就成功。",
+  "- 戰鬥：命中(武藝調整值+武器加值) vs AC(10+身法調整值)。傷害：武器骰+武藝調整值一半。",
+  "- 普通DC 10-15，困難20-25，史詩30-35。",
+  "",
+  "## 勢力 (朝廷、三藩、武林、血蓮宗、朱紅閣)",
+  "好感影響交易和對話：80以上0.6倍價自動成功；30-79好感容易；0-29正常；-50以下見面就攻擊。",
+  "",
+  "## 移動",
+  "走路100里/回合免費，騎馬200里/回合需有馬，驛站400里/回合每100里2兩，坐船150里/回合每100里5兩。",
+  "北京到揚州1500里。前60回合慢節奏，不觸發重大歷史事件。",
+  "",
+  "## 輸出格式（只輸出純JSON，不要加任何說明文字或代碼框）",
+  "{",
+  '  "story": "場景描述（白話，2-4行，引號用【】代替）",',
+  '  "choices": ["選項1", "選項2", "選項3", "選項4"],',
+  '  "stats": { "hp": 數字, "silver": 數字, "fame": 數字, "location": "地點", "turn": 數字, "attrs": { "tizhi": 數字, "neili": 數字, "wuyi": 數字, "shenfa": 數字, "zhimou": 數字, "meili": 數字 } },',
+  '  "favor_delta": { "chaoting": 數字, "sanfan": 數字, "wulin": 數字, "xuelian": 數字, "zhuhong": 數字 },',
+  '  "items_add": ["物品名|分類|最多10字簡介"],',
+  '  "items_remove": ["物品名"],',
+  '  "clue": null,',
+  '  "ending": false',
+  "}"
+].join("\n");
+
+function buildSystemPrompt(){
+  const repStr = Object.entries(factionFavor).map(function(e){
+    var names = {chaoting:'朝廷',sanfan:'三藩',wulin:'武林',xuelian:'血蓮宗',zhuhong:'朱紅閣'};
+    return names[e[0]] + (e[1]>0?'+':'') + e[1];
+  }).join('，');
+  const attrStr = '體魄' + playerAttrs.tizhi + ',內力' + playerAttrs.neili + ',武藝' + playerAttrs.wuyi + ',身法' + playerAttrs.shenfa + ',智謀' + playerAttrs.zhimou + ',魅力' + playerAttrs.meili;
+  const itemStr = playerItems.join('、') || '無';
+  const clueStr = clues.join('；') || '無';
+  return SYSTEM_PROMPT_BASE + '\n\n【玩家當前狀態】\n名字：' + playerName + '，出身：' + playerOrigin + '\n體力：' + playerStats.hp + '，銀兩：' + playerStats.silver + '，名望：' + playerStats.fame + '\n地點：' + (playerStats.location||'北京') + '，回合：' + turnNum + '\n屬性：' + attrStr + '\n勢力好感：' + repStr + '\n物品：' + itemStr + '\n線索：' + clueStr;
+}
+
+// ======= GAME STATE =======
+let playerName = '';
+let playerOrigin = '';
+let apiKey = '';
+let apiProvider = 'silra';
+let playerStats = { hp:100, silver:100, fame:5, location:'北京', year:1668, turn:1 };
+let playerAttrs = { tizhi:10, neili:10, wuyi:10, shenfa:10, zhimou:10, meili:10 };
+let factionFavor = { chaoting:0, sanfan:0, wulin:0, xuelian:0, zhuhong:0 };
+let playerItems = [];
+let playerItemDescs = {};
+let playerItemCats = {};
+let clues = [];
+let historyLog = [];
+let conversationHistory = [];
+let turnNum = 1;
+let qiRemaining = 0;
+let isTyping = false;
+let _activeItemCat = '全部';
+
+// ======= DOM REFS =======
+const screenIntro  = document.getElementById('screen-intro');
+const screenGame   = document.getElementById('screen-game');
+const screenEnding = document.getElementById('screen-ending');
+const storyText    = document.getElementById('story-text');
+const cursorEl     = document.getElementById('cursor');
+const loadingEl    = document.getElementById('loading');
+const errorBanner  = document.getElementById('error-banner');
+const choiceBtns   = document.querySelectorAll('.choice-btn');
+const panelsRow    = document.getElementById('panels-row');
+const itemsPanel   = document.getElementById('items-panel');
+const cluesPanel   = document.getElementById('clues-panel');
+const historySection = document.getElementById('history-section');
+const historyList  = document.getElementById('history-list');
+const chapterLabel = document.getElementById('chapter-label');
+
+// ======= UI UPDATES =======
+function updateStats(){
+  document.getElementById('stat-hp').textContent = playerStats.hp;
+  document.getElementById('stat-silver').textContent = playerStats.silver;
+  document.getElementById('stat-rank').textContent = getRank(playerAttrs.wuyi||0) + ' ' + (playerAttrs.wuyi||0);
+  document.getElementById('stat-fame').textContent = playerStats.fame;
+  document.getElementById('stat-loc').textContent = (playerStats.location||'北京').slice(0,4);
+  document.getElementById('topbar-year').textContent = playerStats.year||1668;
+  document.getElementById('topbar-turn').textContent = playerStats.turn||turnNum;
+  if(chapterLabel) chapterLabel.textContent = '第' + (playerStats.turn||turnNum) + '回合 · ' + (playerStats.location||'北京');
+}
+
+function updateFavors(){
+  var bars = {chaoting:'rb-chaoting',sanfan:'rb-sanfan',wulin:'rb-wulin',xuelian:'rb-xuelian',zhuhong:'rb-zhuhong'};
+  var vals = {chaoting:'rv-chaoting',sanfan:'rv-sanfan',wulin:'rv-wulin',xuelian:'rv-xuelian',zhuhong:'rv-zhuhong'};
+  Object.keys(factionFavor).forEach(function(k){
+    var bar = document.getElementById(bars[k]);
+    var val = document.getElementById(vals[k]);
+    if(bar) bar.style.width = Math.max(2, (factionFavor[k]+100)/2) + '%';
+    if(val) val.textContent = factionFavor[k];
+  });
+}
+
+function updateAttrs(){
+  var keys = ['tizhi','neili','wuyi','shenfa','zhimou','meili'];
+  keys.forEach(function(k){
+    var v = playerAttrs[k]||10;
+    var bar = document.getElementById('ab-'+k);
+    var val = document.getElementById('av-'+k);
+    if(bar) bar.style.width = Math.min(100, v/2) + '%';
+    if(val) val.textContent = v;
+  });
+}
+
+function getCat(i){ return playerItemCats[i] || ITEM_CATS_DEFAULT[i] || '其他'; }
+
+function renderItemList(el, filterCat){
+  var filtered = filterCat==='全部' ? playerItems : playerItems.filter(function(i){ return getCat(i)===filterCat; });
+  if(filtered.length===0){ el.innerHTML = '<span style="font-size:0.65rem;color:#6a5a4a">此分類暫無物品</span>'; return; }
+  var groups = {};
+  filtered.forEach(function(i){ var c=getCat(i); if(!groups[c]) groups[c]=[]; groups[c].push(i); });
+  var html = '';
+  Object.keys(groups).forEach(function(cat){
+    html += '<span class="item-group-label">' + cat + '</span>';
+    groups[cat].forEach(function(i){ html += '<span class="item-tag">' + i + '</span> '; });
+  });
+  el.innerHTML = html;
+}
+
+function updateItemFilterBar(){
+  var bar = document.getElementById('item-filter-bar');
+  if(!bar) return;
+  var presentCats = [];
+  playerItems.forEach(function(i){ var c=getCat(i); if(presentCats.indexOf(c)<0) presentCats.push(c); });
+  var html = '<button class="cat-btn c-all' + (_activeItemCat==='全部'?' active':'') + '" onclick="setItemFilter('全部',this)">全部</button>';
+  presentCats.forEach(function(cat){
+    html += '<button class="cat-btn c-' + cat + (_activeItemCat===cat?' active':'') + '" onclick="setItemFilter('' + cat + '',this)">' + cat + '</button>';
+  });
+  bar.innerHTML = html;
+}
+
+function setItemFilter(cat, btn){
+  _activeItemCat = cat;
+  updateItemFilterBar();
+  renderItemList(document.getElementById('item-list'), cat);
+}
+
+function updateItems(){
+  if(playerItems.length===0){ itemsPanel.style.display='none'; return; }
+  itemsPanel.style.display = 'block';
+  updateItemFilterBar();
+  renderItemList(document.getElementById('item-list'), _activeItemCat||'全部');
+}
+
+function updateQiDisplay(){
+  var el = document.getElementById('stat-qi');
+  if(el) el.textContent = qiRemaining > 0 ? qiRemaining : '—';
+}
+
+function disableChoices(){ choiceBtns.forEach(function(b){ b.disabled=true; }); }
+function enableChoices(){  choiceBtns.forEach(function(b){ b.disabled=false; }); }
+
+function showChoices(choices, delay){
+  var arr = choices||[];
+  choiceBtns.forEach(function(btn, i){
+    if(i < arr.length){
+      btn.style.display = 'flex';
+      btn.querySelector('.choice-text').textContent = arr[i];
+      btn.disabled = false;
+      btn.onclick = function(){ generateStory(arr[i]); };
+    } else {
+      btn.style.display = 'none';
+    }
+  });
+}
+
+function addClue(text){
+  if(!text || clues.indexOf(text)>=0) return;
+  clues.push(text);
+  cluesPanel.style.display = 'block';
+  var el = document.createElement('div');
+  el.className = 'clue-item';
+  el.textContent = text;
+  document.getElementById('clues-list').appendChild(el);
+}
+
+function addToHistory(choice, summary){
+  historyLog.push({choice:choice, summary:summary});
+  historySection.style.display = 'block';
+  var el = document.createElement('div');
+  el.className = 'history-item';
+  el.innerHTML = '<span class="hi-c">▸ ' + choice + '</span>' + summary;
+  historyList.insertBefore(el, historyList.firstChild);
+}
+
+async function typewriter(text, speed){
+  speed = speed||30;
+  storyText.textContent = '';
+  cursorEl.style.display = 'inline-block';
+  isTyping = true;
+  for(var i=0; i<text.length; i++){
+    storyText.textContent += text[i];
+    await new Promise(function(r){ setTimeout(r, speed); });
+  }
+  cursorEl.style.display = 'none';
+  isTyping = false;
+}
+
+// ======= AI CALL (STREAMING) =======
+async function callAI(userMsg){
+  var msgs = [{role:'system', content:buildSystemPrompt()}].concat(conversationHistory).concat([{role:'user', content:userMsg}]);
+  var endpoint = apiProvider==='openai' ? 'https://api.openai.com/v1/chat/completions'
+               : apiProvider==='silra'  ? 'https://api.silra.cn/v1/chat/completions'
+               : 'https://api.deepseek.com/v1/chat/completions';
+  var model = apiProvider==='openai' ? 'gpt-4o-mini' : 'deepseek-v3';
+  var payload = {model:model, messages:msgs, temperature:0.85, top_p:0.9, max_tokens:1200, stream:true};
+  if(apiProvider==='silra') { payload.frequency_penalty=0; payload.presence_penalty=0; }
+
+  var res = await fetch(endpoint, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+    body:JSON.stringify(payload)
+  });
+  if(!res.ok){
+    var e = await res.json().catch(function(){ return {}; });
+    throw new Error((e.error && e.error.message) || 'HTTP '+res.status);
+  }
+
+  var reader = res.body.getReader();
+  var decoder = new TextDecoder();
+  var fullText = '';
+  loadingEl.classList.remove('active');
+  storyText.textContent = '';
+  cursorEl.style.display = 'inline-block';
+  isTyping = true;
+
+  while(true){
+    var chunk = await reader.read();
+    if(chunk.done) break;
+    var text = decoder.decode(chunk.value, {stream:true});
+    var lines = text.split('\n');
+    for(var i=0; i<lines.length; i++){
+      var line = lines[i];
+      if(line.indexOf('data: ')===0 && line !== 'data: [DONE]'){
+        try{
+          var delta = JSON.parse(line.slice(6)).choices[0].delta.content || '';
+          fullText += delta;
+          // Extract story value in real-time using simple string parsing
+          var storyStart = fullText.indexOf('"story"');
+          if(storyStart >= 0){
+            var quoteStart = fullText.indexOf('"', storyStart + 7);
+            if(quoteStart >= 0){
+              var storyVal = '';
+              var j = quoteStart + 1;
+              while(j < fullText.length){
+                var ch = fullText[j];
+                if(ch === '\\' && j+1 < fullText.length){ storyVal += fullText[j+1]; j+=2; }
+                else if(ch === '"'){ break; }
+                else { storyVal += ch; j++; }
+              }
+              if(storyVal) storyText.textContent = storyVal;
+            }
+          }
+        }catch(e){}
+      }
+    }
+  }
+  cursorEl.style.display = 'none';
+  isTyping = false;
+
+  // Parse JSON from full response
+  var raw = fullText.trim();
+  // Remove markdown code fences
+  raw = raw.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+  var start = raw.indexOf('{');
+  var end   = raw.lastIndexOf('}');
+  if(start < 0 || end < 0) throw new Error('AI 回應格式錯誤，請重試');
+  var content = raw.slice(start, end+1);
+  var parsed;
+  try { parsed = JSON.parse(content); }
+  catch(e){
+    var fixed = content.replace(/,(\s*[}\]])/g, '$1');
+    try { parsed = JSON.parse(fixed); }
+    catch(e2){ throw new Error('回應格式錯誤，請再試一次'); }
+  }
+  conversationHistory.push({role:'user',content:userMsg},{role:'assistant',content:JSON.stringify(parsed)});
+  if(conversationHistory.length > 16) conversationHistory = conversationHistory.slice(-16);
+  return parsed;
+}
+
+// ======= GENERATE STORY =======
+async function generateStory(choiceMade){
+  if(isTyping) return;
+  disableChoices();
+  errorBanner.classList.remove('show');
+  loadingEl.classList.add('active');
+
+  var userMsg = choiceMade
+    ? '我選擇：' + choiceMade
+    : '開始遊戲。玩家' + playerName + '，出身' + playerOrigin + '，在' + (ORIGINS[playerOrigin]&&ORIGINS[playerOrigin].loc||'北京') + '，康熙七年初春。';
+
+  var result;
+  try{
+    if(!apiKey){
+      await new Promise(function(r){ setTimeout(r, 900); });
+      result = getDemoScene();
+    } else {
+      result = await callAI(userMsg);
+    }
+  }catch(err){
+    isTyping = false;
+    cursorEl.style.display = 'none';
+    loadingEl.classList.remove('active');
+    errorBanner.textContent = '⚠️ ' + (err.message || '無法連接 AI，請重試');
+    errorBanner.classList.add('show');
+    enableChoices();
+    console.error('[書劍]', err);
+    return;
+  }
+
+  if(!apiKey) loadingEl.classList.remove('active');
+
+  // Snapshot for delta
+  var oldHp = playerStats.hp, oldSilver = playerStats.silver, oldFame = playerStats.fame;
+  var oldAttrs = Object.assign({}, playerAttrs);
+  var oldFavor = Object.assign({}, factionFavor);
+
+  // Apply result
+  if(result.stats){
+    playerStats = Object.assign({}, playerStats, result.stats);
+    playerStats.silver = Math.max(0, playerStats.silver||0);
+    turnNum = result.stats.turn || turnNum+1;
+  }
+  if(result.stats && result.stats.attrs) playerAttrs = Object.assign({}, playerAttrs, result.stats.attrs);
+  if(result.favor_delta){
+    Object.keys(result.favor_delta).forEach(function(k){
+      if(factionFavor[k]!==undefined) factionFavor[k] = Math.max(-100, Math.min(100, factionFavor[k]+(result.favor_delta[k]||0)));
+    });
+  }
+  if(result.items_add && result.items_add.length){
+    result.items_add.forEach(function(entry){
+      var parts = entry.split('|');
+      var name = parts[0].trim();
+      if(!name || /^白銀\d+兩$/.test(name)) return;
+      if(playerItems.indexOf(name)<0) playerItems.push(name);
+      if(parts.length>=3){ playerItemCats[name]=parts[1].trim(); playerItemDescs[name]=parts[2].trim().slice(0,20); }
+      else if(parts.length===2){ playerItemDescs[name]=parts[1].trim().slice(0,20); }
+    });
+  }
+  if(result.items_remove && result.items_remove.length){
+    playerItems = playerItems.filter(function(i){ return result.items_remove.indexOf(i)<0; });
+  }
+  if(result.clue) addClue(result.clue);
+
+  // Build delta string
+  var attrNames = {tizhi:'體魄',neili:'內力',wuyi:'武藝',shenfa:'身法',zhimou:'智謀',meili:'魅力'};
+  var facNames  = {chaoting:'朝廷',sanfan:'三藩',wulin:'武林',xuelian:'血蓮宗',zhuhong:'朱紅閣'};
+  var deltas = [];
+  var dHp = playerStats.hp - oldHp;
+  var dSilver = playerStats.silver - oldSilver;
+  var dFame = playerStats.fame - oldFame;
+  if(dHp!==0) deltas.push('體力'+(dHp>0?'+':'')+dHp);
+  if(dSilver!==0) deltas.push('銀兩'+(dSilver>0?'+':'')+dSilver);
+  if(dFame!==0) deltas.push('名望'+(dFame>0?'+':'')+dFame);
+  Object.keys(attrNames).forEach(function(k){ var d=playerAttrs[k]-oldAttrs[k]; if(d!==0) deltas.push(attrNames[k]+(d>0?'+':'')+d); });
+  Object.keys(facNames).forEach(function(k){ var d=factionFavor[k]-oldFavor[k]; if(d!==0) deltas.push(facNames[k]+'好感'+(d>0?'+':'')+d); });
+  if(result.items_add && result.items_add.length) result.items_add.forEach(function(i){ deltas.push('獲得【'+i.split('|')[0]+'】'); });
+  if(result.items_remove && result.items_remove.length) result.items_remove.forEach(function(i){ deltas.push('失去【'+i+'】'); });
+
+  updateStats(); updateFavors(); updateAttrs(); updateItems();
+  if(apiKey && qiRemaining>0){ qiRemaining--; updateQiDisplay(); }
+  if(choiceMade) addToHistory(choiceMade, (result.story||'').slice(0,48)+'…');
+
+  // Show story for demo mode (API already streamed it)
+  if(!apiKey){ storyText.textContent=''; await typewriter(result.story||''); }
+  else if(!storyText.textContent.trim()){ await typewriter(result.story||''); }
+
+  // Append delta
+  if(deltas.length > 0){
+    var deltaEl = document.createElement('div');
+    deltaEl.style.cssText = 'margin-top:0.8rem;font-size:0.72rem;color:#6a5a4a;line-height:2;';
+    deltaEl.textContent = '（' + deltas.join('　') + '）';
+    storyText.appendChild(deltaEl);
+  }
+
+  if(result.ending){ setTimeout(function(){ showEnding(result.story||''); }, 1500); return; }
+  showChoices(result.choices||[], 200);
+}
+
+// ======= ORIGIN SELECTION =======
+var currentPage = 1;
+var originKeys = Object.keys(ORIGINS);
+
+function renderOrigins(page){
+  var perPage = 5;
+  var start = (page-1)*perPage;
+  var items = originKeys.slice(start, start+perPage);
+  var pages = Math.ceil(originKeys.length/perPage);
+  ['p1','p2'].forEach(function(pid){
+    var el = document.getElementById(pid);
+    if(el) el.classList.remove('active');
+  });
+  var pageEl = document.getElementById('p'+page);
+  if(!pageEl) return;
+  pageEl.innerHTML = '';
+  items.forEach(function(k, idx){
+    var o = ORIGINS[k];
+    var btn = document.createElement('button');
+    btn.className = 'origin-btn' + (playerOrigin===k?' selected':'');
+    var attrHighlight = Object.entries(o.attrs).filter(function(e){ return e[1]>10; }).map(function(e){ return ['tizhi','neili','wuyi','shenfa','zhimou','meili'].indexOf(e[0])>=0 ? (['體魄','內力','武藝','身法','智謀','魅力'][['tizhi','neili','wuyi','shenfa','zhimou','meili'].indexOf(e[0])]+'+') : ''; }).join('');
+    btn.innerHTML = '<span class="ob-icon">' + ['🏯','📚','🗡️','🌑','⚓','👑','💰','🐺','❄️'][start+idx] + '</span>'
+      + '<span class="ob-text">' + k + '<br><span style="font-size:0.65rem;opacity:0.7">' + o.loc + '</span></span>'
+      + '<span class="ob-hint"><span class="hint-label">銀兩</span><span class="hint-val">' + o.silver + '</span></span>';
+    btn.onclick = function(){ selectOrigin(k); };
+    pageEl.appendChild(btn);
+  });
+  pageEl.classList.add('active');
+  document.querySelectorAll('.page-nav-btn').forEach(function(b, i){
+    b.classList.toggle('active-pg', i+1===page);
+  });
+}
+
+function selectOrigin(key){
+  playerOrigin = key;
+  document.querySelectorAll('.origin-btn').forEach(function(b){ b.classList.remove('selected'); });
+  event.currentTarget && event.currentTarget.classList.add('selected');
+  renderOrigins(currentPage);
+}
+
+function goPage(p){ currentPage=p; renderOrigins(p); }
+
+// ======= START GAME =======
+function startGame(){
+  if(!playerOrigin){ showToast('請先選擇出身背景'); return; }
+  playerName = document.getElementById('player-name').value.trim() || '無名俠客';
+  apiKey = document.getElementById('api-key-input').value.trim();
+  apiProvider = document.getElementById('api-provider').value;
+
+  var o = ORIGINS[playerOrigin];
+  Object.keys(o.favor).forEach(function(k){ if(factionFavor[k]!==undefined) factionFavor[k]+=(o.favor[k]||0); });
+  playerAttrs = Object.assign({}, playerAttrs, o.attrs);
+  playerStats.silver = o.silver;
+  playerStats.fame = o.attrs.fame||5;
+  playerStats.location = o.loc;
+  playerItems = o.items.filter(function(i){ return !/^白銀\d+兩$/.test(i.trim()); });
+
+  var qiVal = parseInt(document.getElementById('qi-input').value);
+  if(!isNaN(qiVal) && qiVal>0){ qiRemaining=qiVal; }
+
+  screenIntro.classList.remove('active');
+  screenGame.classList.add('active');
+  document.getElementById('topbar-name').textContent = playerName + ' · 書劍';
+  document.getElementById('stat-origin').textContent = playerOrigin.slice(0,4);
+  updateStats(); updateFavors(); updateAttrs(); updateItems();
+  panelsRow.style.display = 'grid';
+  document.getElementById('info-btn').style.display = 'flex';
+  updateQiDisplay();
+  generateStory(null);
+}
+
+// ======= ENDING =======
+function showEnding(finalStory){
+  var top = Object.entries(factionFavor).sort(function(a,b){ return b[1]-a[1]; })[0];
+  var fnames = {chaoting:'朝廷之臣',sanfan:'三藩之雄',wulin:'武林宗師',xuelian:'血蓮護法',zhuhong:'朱紅英雄'};
+  document.getElementById('ending-title').textContent = playerName + ' — ' + (fnames[top[0]]||'江湖傳說');
+  document.getElementById('ending-text').textContent = finalStory;
+  screenEnding.classList.add('active');
+}
+document.getElementById('restart-btn').onclick = function(){ location.reload(); };
+
+// ======= SAVE / LOAD =======
+function saveGame(){
+  var d = {playerName,playerOrigin,apiProvider,playerStats,playerAttrs,factionFavor,playerItems,playerItemDescs,playerItemCats,clues,historyLog,conversationHistory,turnNum,qiRemaining,savedAt:new Date().toLocaleString('zh-HK')};
+  localStorage.setItem('wuxia_v3_save', JSON.stringify(d));
+  showToast('存檔成功 ✓');
+  updateSaveBtn();
+}
+function loadGame(){
+  var raw = localStorage.getItem('wuxia_v3_save');
+  if(!raw){ showToast('沒有存檔記錄'); return; }
+  var d = JSON.parse(raw);
+  playerName=d.playerName; playerOrigin=d.playerOrigin; apiProvider=d.apiProvider||'silra';
+  playerStats=d.playerStats; playerStats.silver=Math.max(0,playerStats.silver||0);
+  playerAttrs=d.playerAttrs; factionFavor=d.factionFavor;
+  playerItems=(d.playerItems||[]).filter(function(i){ return !/^白銀\d+兩$/.test(i.trim()); });
+  playerItemDescs=Object.assign({},d.playerItemDescs||{});
+  playerItemCats=Object.assign({},d.playerItemCats||{});
+  clues=d.clues||[]; historyLog=d.historyLog||[];
+  conversationHistory=d.conversationHistory||[]; turnNum=d.turnNum||1; qiRemaining=d.qiRemaining||0;
+  apiKey=document.getElementById('api-key-input').value.trim();
+  screenIntro.classList.remove('active');
+  screenGame.classList.add('active');
+  document.getElementById('topbar-name').textContent = playerName + ' · 書劍';
+  document.getElementById('stat-origin').textContent = playerOrigin.slice(0,4);
+  updateStats(); updateFavors(); updateAttrs(); updateItems();
+  panelsRow.style.display = 'grid';
+  document.getElementById('info-btn').style.display = 'flex';
+  if(clues.length>0){ cluesPanel.style.display='block'; clues.forEach(function(c){ var el=document.createElement('div'); el.className='clue-item'; el.textContent=c; document.getElementById('clues-list').appendChild(el); }); }
+  if(historyLog.length>0){ historySection.style.display='block'; historyList.innerHTML=historyLog.map(function(h){ return '<div class="history-item"><span class="hi-c">▸ '+h.choice+'</span>'+h.summary+'</div>'; }).join(''); }
+  showToast('讀取存檔：'+d.savedAt);
+  generateStory(null);
+}
+function deleteSave(){ localStorage.removeItem('wuxia_v3_save'); showToast('存檔已刪除'); updateSaveBtn(); }
+function exportSave(){
+  var raw=localStorage.getItem('wuxia_v3_save');
+  if(!raw){ showToast('請先存檔再匯出'); return; }
+  var blob=new Blob([raw],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download='書劍v3_'+playerName+'_第'+turnNum+'回合.json';
+  a.click(); URL.revokeObjectURL(url); showToast('存檔已匯出 ✓');
+}
+function importSave(e){
+  var file=e.target.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){ try{ var d=JSON.parse(ev.target.result); localStorage.setItem('wuxia_v3_save',JSON.stringify(d)); showToast('存檔已匯入，請點「讀取存檔」繼續'); updateSaveBtn(); }catch(e){ showToast('檔案格式錯誤'); } };
+  reader.readAsText(file);
+}
+function updateSaveBtn(){
+  var has=!!localStorage.getItem('wuxia_v3_save');
+  ['load-btn','del-btn','export-btn'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display=has?'inline-block':'none'; });
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  if(!t){ t=document.createElement('div'); t.id='toast'; t.style.cssText='position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:rgba(44,58,74,0.9);color:#f4f9fd;padding:0.5rem 1.2rem;border-radius:2rem;font-size:0.75rem;letter-spacing:0.15em;z-index:999;pointer-events:none;font-family:serif;transition:opacity 0.4s;'; document.body.appendChild(t); }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._timer); t._timer=setTimeout(function(){ t.style.opacity='0'; },2200);
+}
+
+// ======= INFO DRAWER =======
+function openInfoDrawer(){ document.getElementById('info-drawer').classList.add('open'); document.getElementById('info-overlay').classList.add('open'); showInfoTab('attrs'); }
+function closeInfoDrawer(){ document.getElementById('info-drawer').classList.remove('open'); document.getElementById('info-overlay').classList.remove('open'); }
+
+function showInfoTab(tab){
+  document.querySelectorAll('.info-tab').forEach(function(b,i){ b.classList.toggle('active',(tab==='attrs'&&i===0)||(tab==='items'&&i===1)); });
+  var content = document.getElementById('info-content');
+  if(tab==='attrs'){
+    var html='';
+    Object.keys(ATTR_DESCS).forEach(function(k){
+      var d=ATTR_DESCS[k]; var v=playerAttrs[k]||10; var m=Math.floor((v-10)/2);
+      html += '<div class="info-attr-row"><span class="info-attr-name">'+d.name+'</span><span class="info-attr-val"> '+v+'（調整值'+(m>=0?'+':'')+m+'）</span><div class="info-attr-desc">'+d.desc+'</div></div>';
+    });
+    content.innerHTML = html;
+  } else {
+    if(playerItems.length===0){ content.innerHTML='<div class="info-empty">尚無隨身物品</div>'; return; }
+    var presentCats=[];
+    playerItems.forEach(function(i){ var c=getCat(i); if(presentCats.indexOf(c)<0) presentCats.push(c); });
+    var catBtns='<div class="cat-filter-bar" style="margin-bottom:0.7rem"><button class="cat-btn c-all active" id="iall" onclick="filterInfoItems(\'全部\')">全部</button>';
+    presentCats.forEach(function(cat){ catBtns += '<button class="cat-btn c-'+cat+'" id="ic-'+cat+'" onclick="filterInfoItems(\''+cat+'\')">'+cat+'</button>'; });
+    catBtns += '</div><div id="info-item-list"></div>';
+    content.innerHTML = catBtns;
+    filterInfoItems('全部');
+  }
+}
+
+function filterInfoItems(cat){
+  document.querySelectorAll('[id^="ic-"],[id="iall"]').forEach(function(b){ b.classList.toggle('active', b.id==='ic-'+cat || (cat==='全部'&&b.id==='iall')); });
+  var list=document.getElementById('info-item-list');
+  if(!list) return;
+  var filtered=cat==='全部'?playerItems:playerItems.filter(function(i){ return getCat(i)===cat; });
+  if(filtered.length===0){ list.innerHTML='<div class="info-empty">此分類暫無物品</div>'; return; }
+  list.innerHTML=filtered.map(function(i){
+    var desc=playerItemDescs[i]||ITEM_DESCS_DEFAULT[i]||'神秘物品';
+    var c=getCat(i);
+    return '<div class="info-item-row"><div class="info-item-name"><span class="cat-btn c-'+c+'" style="font-size:0.55rem;padding:0.1rem 0.35rem;margin-right:0.3rem;cursor:default;">'+c+'</span>【'+i+'】</div><div class="info-item-desc">'+desc+'</div></div>';
+  }).join('');
+}
+
+// ======= INIT =======
+document.addEventListener('DOMContentLoaded', function(){
+  renderOrigins(1);
+  updateSaveBtn();
+  var infoBtn=document.getElementById('info-btn');
+  var infoClose=document.getElementById('info-close');
+  var infoOverlay=document.getElementById('info-overlay');
+  if(infoBtn) infoBtn.addEventListener('click', openInfoDrawer);
+  if(infoClose) infoClose.addEventListener('click', closeInfoDrawer);
+  if(infoOverlay) infoOverlay.addEventListener('click', closeInfoDrawer);
+});
+
+</script>
+</body>
+</html>
